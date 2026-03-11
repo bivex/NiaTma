@@ -35,6 +35,10 @@ export function AuthScreen() {
   const persistedSessionStatus = useAuthStore((state) => state.sessionStatus);
   const syncSessionStatus = useAuthStore((state) => state.syncSessionStatus);
   const postAuthPath = useMemo(() => resolvePostAuthPath(searchParams.get('next')), [searchParams]);
+  const tonConnectHref = useMemo(
+    () => (postAuthPath ? `${routePaths.tonConnect}?next=${encodeURIComponent(postAuthPath)}` : routePaths.tonConnect),
+    [postAuthPath],
+  );
   const initialSessionStatus = useMemo(
     () => sanitizePersistedAuthSessionStatus(persistedSessionStatus),
     [persistedSessionStatus],
@@ -186,6 +190,15 @@ export function AuthScreen() {
               }}
             >
               {t('actions.devSignIn')}
+            </Button>
+            <Button
+              stretched
+              mode="outline"
+              onClick={() => {
+                router.push(tonConnectHref);
+              }}
+            >
+              {t('actions.walletSignIn')}
             </Button>
             <Button
               stretched

@@ -7,6 +7,7 @@ import { LocaleSwitcher } from '@/features/i18n/presentation/LocaleSwitcher';
 import { routePaths } from '@/features/navigation/domain/routes';
 import { AppLink } from '@/features/navigation/presentation/AppLink';
 import { Page } from '@/features/navigation/presentation/Page';
+import { appConfig } from '@/shared/config/appConfig';
 
 import tonSvg from '@/app/_assets/ton.svg';
 
@@ -63,6 +64,16 @@ export function HomeScreen() {
               </div>
             </Cell>
           </AppLink>
+          {appConfig.features.monetization && (
+            <AppLink href={routePaths.premium}>
+              <Cell>
+                <div className="home-screen__cell-copy">
+                  <span className="home-screen__cell-title">{t('features.premium.title')}</span>
+                  <span className="home-screen__cell-subtitle">{t('features.premium.subtitle')}</span>
+                </div>
+              </Cell>
+            </AppLink>
+          )}
           <AppLink href={routePaths.platform}>
             <Cell>
               <div className="home-screen__cell-copy">

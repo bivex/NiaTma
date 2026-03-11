@@ -33,9 +33,13 @@ export function parseAuthLinkedWalletInput(value: unknown): AuthLinkedWalletInpu
   };
 }
 
-export function createAuthLinkedWallet(input: AuthLinkedWalletInput, linkedAt = Date.now()): AuthLinkedWallet {
+export function createAuthLinkedWallet(
+  input: AuthLinkedWalletInput,
+  options: { linkedAt?: number; verifiedAt?: number } = {},
+): AuthLinkedWallet {
   return {
     ...input,
-    linkedAt,
+    linkedAt: options.linkedAt ?? Date.now(),
+    verifiedAt: options.verifiedAt,
   };
 }

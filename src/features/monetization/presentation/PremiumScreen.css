@@ -1,0 +1,19 @@
+.premium-screen__copy {
+  display: grid;
+  gap: 8px;
+}
+
+.premium-screen__title {
+  margin: 0;
+}
+
+.premium-screen__description {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.premium-screen__actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}

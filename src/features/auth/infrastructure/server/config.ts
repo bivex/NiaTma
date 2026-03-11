@@ -4,6 +4,8 @@ export interface AuthConfig {
   allowDevLogin: boolean;
   sessionTtlSeconds: number;
   initDataMaxAgeSeconds: number;
+  tonProofMaxAgeSeconds: number;
+  tonProofPayloadTtlSeconds: number;
   secureCookies: boolean;
 }
 
@@ -33,6 +35,8 @@ export function createAuthConfig(env: Record<string, string | undefined> = proce
     allowDevLogin: parseBoolean(env.AUTH_ALLOW_DEV_LOGIN, !isProduction),
     sessionTtlSeconds: Number(env.AUTH_SESSION_TTL_SECONDS || 60 * 60 * 24 * 7),
     initDataMaxAgeSeconds: Number(env.AUTH_TELEGRAM_MAX_AGE_SECONDS || 60 * 60 * 24),
+    tonProofMaxAgeSeconds: Number(env.AUTH_TON_PROOF_MAX_AGE_SECONDS || 60 * 15),
+    tonProofPayloadTtlSeconds: Number(env.AUTH_TON_PROOF_PAYLOAD_TTL_SECONDS || 60 * 5),
     secureCookies: isProduction,
   };
 }

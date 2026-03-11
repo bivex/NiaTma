@@ -21,7 +21,7 @@ describe('auth wallet helpers', () => {
 
   test('rejects invalid wallet link input and stamps linked wallet snapshots', () => {
     expect(parseAuthLinkedWalletInput({ address: '' })).toBeUndefined();
-    expect(createAuthLinkedWallet({ address: 'EQD123', chain: 'mainnet' }, 1_234)).toEqual({
+    expect(createAuthLinkedWallet({ address: 'EQD123', chain: 'mainnet' }, { linkedAt: 1_234 })).toEqual({
       address: 'EQD123',
       chain: 'mainnet',
       linkedAt: 1_234,

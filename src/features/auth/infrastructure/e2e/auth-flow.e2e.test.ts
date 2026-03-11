@@ -1,11 +1,56 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 
+import { keyPairFromSeed, sign } from '@ton/crypto';
+import { beginCell, storeStateInit, WalletContractV4 } from '@ton/ton';
+
 const port = 3300 + Math.floor(Math.random() * 100);
 const baseUrl = `http://127.0.0.1:${port}`;
 
 let server: ChildProcessWithoutNullStreams;
 let serverOutput = '';
+
+async function createTonProofRequest(payload: string, domain: string) {
+  const keyPair = keyPairFromSeed(Buffer.alloc(32, 9));
+  const wallet = WalletContractV4.create({ workchain: 0, publicKey: keyPair.publicKey });
+  const timestamp = Math.floor(Date.now() / 1000);
+  const domainLength = Buffer.alloc(4);
+  domainLength.writeUInt32LE(Buffer.byteLength(domain), 0);
+  const timestampBuffer = Buffer.alloc(8);
+  timestampBuffer.writeBigUInt64LE(BigInt(timestamp), 0);
+  const workchain = Buffer.alloc(4);
+  workchain.writeInt32BE(wallet.address.workChain, 0);
+  const message = Buffer.concat([
+    Buffer.from('ton-proof-item-v2/'),
+    workchain,
+    wallet.address.hash,
+    domainLength,
+    Buffer.from(domain),
+    timestampBuffer,
+    Buffer.from(payload),
+  ]);
+  const messageHash = Buffer.from(await crypto.subtle.digest('SHA-256', message));
+  const digest = Buffer.from(
+    await crypto.subtle.digest('SHA-256', Buffer.concat([Buffer.from([0xff, 0xff]), Buffer.from('ton-connect'), messageHash])),
+  );
+
+  return {
+    address: wallet.address.toRawString(),
+    chain: '-239',
+    publicKey: keyPair.publicKey.toString('hex'),
+    walletStateInit: beginCell().store(storeStateInit(wallet.init)).endCell().toBoc().toString('base64'),
+    provider: 'Tonkeeper',
+    proof: {
+      timestamp,
+      domain: {
+        lengthBytes: Buffer.byteLength(domain),
+        value: domain,
+      },
+      payload,
+      signature: sign(digest, keyPair.secretKey).toString('base64'),
+    },
+  };
+}
 
 async function waitForServerReady() {
   const startedAt = Date.now();
@@ -57,6 +102,10 @@ describe('auth flow e2e', () => {
   });
 
   test('redirects anonymous users and admits authenticated users to the protected profile flow', async () => {
+    const anonymousPremium = await fetch(`${baseUrl}/premium`, { redirect: 'manual' });
+    expect(anonymousPremium.status).toBe(200);
+    expect(await anonymousPremium.text()).toContain('Requires a verified TON wallet session');
+
     const anonymousProfile = await fetch(`${baseUrl}/profile?tab=identity`, { redirect: 'manual' });
     expect(anonymousProfile.status).toBe(307);
     expect(anonymousProfile.headers.get('location')).toBe('/auth?next=%2Fprofile%3Ftab%3Didentity');
@@ -115,6 +164,12 @@ describe('auth flow e2e', () => {
     expect(profilePageHtml).toContain('dev:local-preview');
     expect(profilePageHtml).toContain('EQD123');
 
+    const linkedPremiumResponse = await fetch(`${baseUrl}/premium`, {
+      headers: { cookie: linkedSessionCookie || '' },
+    });
+    expect(linkedPremiumResponse.status).toBe(200);
+    expect(await linkedPremiumResponse.text()).toContain('Linking a wallet to a Telegram/dev session is not enough');
+
     const walletUnlinkResponse = await fetch(`${baseUrl}/api/auth/wallet`, {
       method: 'DELETE',
       headers: { cookie: linkedSessionCookie || '' },
@@ -127,5 +182,35 @@ describe('auth flow e2e', () => {
     });
     const unlinkedProfile = (await unlinkedProfileApiResponse.json()) as { wallet?: unknown };
     expect(unlinkedProfile.wallet).toBeUndefined();
+
+    const payloadResponse = await fetch(`${baseUrl}/api/auth/ton-proof/payload`);
+    expect(payloadResponse.status).toBe(200);
+    const tonProofPayload = (await payloadResponse.json()) as { payload: string };
+
+    const verifyResponse = await fetch(`${baseUrl}/api/auth/ton-proof/verify`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(await createTonProofRequest(tonProofPayload.payload, `127.0.0.1:${port}`)),
+    });
+    expect(verifyResponse.status).toBe(200);
+
+    const tonSessionCookie = readSessionCookie(verifyResponse);
+    expect(tonSessionCookie).toContain('nia_auth_session=');
+
+    const tonProfileResponse = await fetch(`${baseUrl}/api/auth/profile`, {
+      headers: { cookie: tonSessionCookie || '' },
+    });
+    expect(tonProfileResponse.status).toBe(200);
+    const tonProfile = (await tonProfileResponse.json()) as { provider: string; subject: string; wallet?: { address?: string } };
+    expect(tonProfile.provider).toBe('ton');
+    expect(tonProfile.subject.startsWith('ton:')).toBe(true);
+
+    const premiumResponse = await fetch(`${baseUrl}/premium`, {
+      headers: { cookie: tonSessionCookie || '' },
+    });
+    expect(premiumResponse.status).toBe(200);
+    const premiumHtml = await premiumResponse.text();
+    expect(premiumHtml).toContain('Premium wallet-gated preview unlocked');
+    expect(premiumHtml).toContain(tonProfile.wallet?.address || '');
   });
 });

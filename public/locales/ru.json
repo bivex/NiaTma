@@ -23,6 +23,10 @@
         "title": "Protected Profile",
         "subtitle": "Auth-required user profile route и session-backed profile API"
       },
+      "premium": {
+        "title": "Premium Wallet Gate",
+        "subtitle": "Маршрут в стиле монетизации, который открывается только для verified TON wallet session"
+      },
       "platform": {
         "title": "Telegram Platform",
         "subtitle": "Main Button, haptics, swipe navigation, skeleton loading и app config"
@@ -87,6 +91,10 @@
       "unlinkWallet": "Удалить связанный кошелёк из текущей session"
     },
     "messages": {
+      "tonProofSuccess": "TON wallet успешно верифицирован и превращён в authenticated wallet-first session.",
+      "tonProofError": "Не удалось верифицировать владение TON wallet для текущего proof payload.",
+      "tonProofRejected": "Подключённый кошелёк не вернул успешный ton_proof item.",
+      "tonProofMissingPublicKey": "Подключённый кошелёк не предоставил public key, необходимый для локальной proof verification.",
       "linkSuccess": "Подключённый кошелёк связан с текущей authenticated session.",
       "linkError": "Не удалось связать подключённый кошелёк с текущей session.",
       "unlinkSuccess": "Связанный кошелёк удалён из текущей authenticated session.",
@@ -94,9 +102,11 @@
     },
     "linking": {
       "header": "TON-кошелёк, связанный с session",
-      "footer": "Связывание сохраняет текущую wallet identity внутри signed auth session cookie. Это расширение wallet-link, а не полноценный ton_proof backend verification flow.",
+      "footer": "Связывание сохраняет текущую wallet identity внутри signed auth session cookie. Полный wallet-first auth теперь использует ton_proof verification и выдаёт premium wallet access.",
       "signInPrompt": "Сначала войдите, если хотите связать текущий подключённый кошелёк с authenticated session.",
       "signInLink": "Открыть Auth Foundation",
+      "walletFirstActive": "Wallet-first TON auth session активна.",
+      "premiumLink": "Открыть premium wallet gate",
       "fields": {
         "provider": "Провайдер связанного кошелька",
         "address": "Адрес связанного кошелька",
@@ -312,6 +322,7 @@
     "actions": {
       "telegramSignIn": "Войти через Telegram initData",
       "devSignIn": "Использовать local preview login",
+      "walletSignIn": "Открыть wallet-first вход через TON",
       "refreshSession": "Обновить session",
       "logout": "Выйти"
     },
@@ -360,6 +371,39 @@
       "platform": "Platform baseline",
       "profile": "Protected profile",
       "tonConnect": "TON Connect"
+    }
+  },
+  "premium": {
+    "intro": {
+      "header": "Premium wallet gate",
+      "unlockedHeader": "Premium wallet-gated preview unlocked",
+      "unlockedDescription": "Этот premium route доступен, потому что текущая session создана verified TON wallet через ton_proof."
+    },
+    "actions": {
+      "openTonConnect": "Открыть TON Connect",
+      "openAuth": "Открыть Auth Foundation"
+    },
+    "reasons": {
+      "disabled": "Monetization features сейчас отключены через app config.",
+      "anonymous": "Требуется verified TON wallet session. Подключите кошелёк и завершите ton_proof verification, чтобы открыть premium access.",
+      "wallet_linked_only": "Связать кошелёк с Telegram/dev session недостаточно. Переавторизуйтесь через TON Connect, чтобы открыть premium route.",
+      "authenticated_non_wallet": "Эта session аутентифицирована, но не была выпущена из verified TON wallet. Используйте TON Connect, чтобы открыть premium access.",
+      "granted": "Premium access активирован."
+    },
+    "status": {
+      "header": "Статус entitlement",
+      "footer": "Этот entitlement выдаётся verified wallet-first auth flow и может стать основой для будущих paid или gated experiences."
+    },
+    "fields": {
+      "plan": "План",
+      "walletPremiumValue": "Wallet Premium",
+      "source": "Провайдер кошелька",
+      "walletAddress": "Адрес кошелька",
+      "grantedAt": "Выдано"
+    },
+    "content": {
+      "header": "Открытый premium content",
+      "body": "Теперь у вас есть доступ к этому wallet-gated premium preview. Следующий increment может заменить demo entitlement на subscription, NFT ownership или payment-backed access control."
     }
   },
   "profile": {

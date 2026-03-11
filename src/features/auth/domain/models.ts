@@ -1,6 +1,6 @@
 import type { DisplayDataValue } from '@/shared/domain/display-data';
 
-export type AuthProvider = 'telegram' | 'dev';
+export type AuthProvider = 'telegram' | 'dev' | 'ton';
 
 export interface AuthLinkedWalletInput {
   address: string;
@@ -11,6 +11,17 @@ export interface AuthLinkedWalletInput {
 
 export interface AuthLinkedWallet extends AuthLinkedWalletInput {
   linkedAt: number;
+  verifiedAt?: number;
+}
+
+export interface AuthEntitlement {
+  active: boolean;
+  source: 'ton-proof';
+  grantedAt: number;
+}
+
+export interface AuthSessionEntitlements {
+  walletPremium?: AuthEntitlement;
 }
 
 export interface AuthSessionUser {
@@ -28,6 +39,31 @@ export interface AuthSession {
   expiresAt: number;
   user: AuthSessionUser;
   wallet?: AuthLinkedWallet;
+  entitlements?: AuthSessionEntitlements;
+}
+
+export interface AuthTonProof {
+  timestamp: number;
+  domain: {
+    lengthBytes: number;
+    value: string;
+  };
+  payload: string;
+  signature: string;
+}
+
+export interface AuthTonProofPayload {
+  payload: string;
+  expiresAt: number;
+}
+
+export interface VerifyAuthTonProofInput {
+  address: string;
+  chain?: string;
+  publicKey: string;
+  walletStateInit: string;
+  provider?: string;
+  proof: AuthTonProof;
 }
 
 export interface AuthCapabilities {

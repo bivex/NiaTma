@@ -1,5 +1,6 @@
 export interface AppFeatureConfig {
   applicationDiagnostics: boolean;
+  monetization: boolean;
   platformDemo: boolean;
   telegramHaptics: boolean;
   telegramMainButton: boolean;
@@ -40,6 +41,7 @@ export function createAppConfig(
     isDevelopment: env.NODE_ENV === 'development',
     features: {
       applicationDiagnostics: parseBoolean(env.NEXT_PUBLIC_ENABLE_APPLICATION_DIAGNOSTICS, true),
+      monetization: parseBoolean(env.NEXT_PUBLIC_ENABLE_MONETIZATION, true),
       platformDemo: parseBoolean(env.NEXT_PUBLIC_ENABLE_PLATFORM_DEMO, true),
       telegramHaptics: parseBoolean(env.NEXT_PUBLIC_ENABLE_TELEGRAM_HAPTICS, true),
       telegramMainButton: parseBoolean(env.NEXT_PUBLIC_ENABLE_TELEGRAM_MAIN_BUTTON, true),

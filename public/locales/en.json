@@ -23,6 +23,10 @@
         "title": "Protected Profile",
         "subtitle": "Auth-required user profile route and session-backed profile API"
       },
+      "premium": {
+        "title": "Premium Wallet Gate",
+        "subtitle": "A monetization-style route unlocked only by a verified TON wallet session"
+      },
       "platform": {
         "title": "Telegram Platform",
         "subtitle": "Main Button, haptics, swipe navigation, skeleton loading and app config"
@@ -87,6 +91,10 @@
       "unlinkWallet": "Clear linked wallet from current session"
     },
     "messages": {
+      "tonProofSuccess": "TON wallet verified and promoted into an authenticated wallet-first session.",
+      "tonProofError": "Unable to verify TON wallet ownership for the current proof payload.",
+      "tonProofRejected": "The connected wallet did not return a successful ton_proof item.",
+      "tonProofMissingPublicKey": "The connected wallet did not provide a public key required for local proof verification.",
       "linkSuccess": "Connected wallet linked to the current authenticated session.",
       "linkError": "Unable to link the connected wallet to the current session.",
       "unlinkSuccess": "Linked wallet removed from the current authenticated session.",
@@ -94,9 +102,11 @@
     },
     "linking": {
       "header": "Session-linked TON wallet",
-      "footer": "Linking stores the current wallet identity inside the signed auth session cookie. This is a wallet-link expansion, not a full ton_proof backend verification flow yet.",
+      "footer": "Linking stores the current wallet identity inside the signed auth session cookie. Full wallet-first auth now uses ton_proof verification and grants premium wallet access.",
       "signInPrompt": "Sign in first if you want to link the currently connected wallet to your authenticated session.",
       "signInLink": "Open Auth Foundation",
+      "walletFirstActive": "Wallet-first TON auth session is active.",
+      "premiumLink": "Open premium wallet gate",
       "fields": {
         "provider": "Linked wallet provider",
         "address": "Linked wallet address",
@@ -312,6 +322,7 @@
     "actions": {
       "telegramSignIn": "Sign in with Telegram initData",
       "devSignIn": "Use local preview login",
+      "walletSignIn": "Open TON wallet-first sign-in",
       "refreshSession": "Refresh session",
       "logout": "Logout"
     },
@@ -360,6 +371,39 @@
       "platform": "Platform baseline",
       "profile": "Protected profile",
       "tonConnect": "TON Connect"
+    }
+  },
+  "premium": {
+    "intro": {
+      "header": "Premium wallet gate",
+      "unlockedHeader": "Premium wallet-gated preview unlocked",
+      "unlockedDescription": "This premium route is available because the current session was created by a verified TON wallet using ton_proof."
+    },
+    "actions": {
+      "openTonConnect": "Open TON Connect",
+      "openAuth": "Open Auth Foundation"
+    },
+    "reasons": {
+      "disabled": "Monetization features are currently disabled by app config.",
+      "anonymous": "Requires a verified TON wallet session. Connect a wallet and complete ton_proof verification to unlock premium access.",
+      "wallet_linked_only": "Linking a wallet to a Telegram/dev session is not enough. Re-authenticate through TON Connect to unlock the premium route.",
+      "authenticated_non_wallet": "This session is authenticated, but it was not issued from a verified TON wallet. Use TON Connect to unlock premium access.",
+      "granted": "Premium access is active."
+    },
+    "status": {
+      "header": "Entitlement status",
+      "footer": "This entitlement is granted by the verified wallet-first auth flow and can be used as a basis for future paid or gated experiences."
+    },
+    "fields": {
+      "plan": "Plan",
+      "walletPremiumValue": "Wallet Premium",
+      "source": "Wallet provider",
+      "walletAddress": "Wallet address",
+      "grantedAt": "Granted at"
+    },
+    "content": {
+      "header": "Unlocked premium content",
+      "body": "You now have access to this wallet-gated premium preview. The next increment can replace this demo entitlement with subscription, NFT ownership, or payment-backed access control."
     }
   },
   "profile": {

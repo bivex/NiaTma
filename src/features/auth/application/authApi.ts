@@ -1,7 +1,14 @@
-import type { AuthLinkedWalletInput, AuthSessionStatus, AuthUserProfile } from '../domain/models';
+import type {
+  AuthLinkedWalletInput,
+  AuthSessionStatus,
+  AuthTonProofPayload,
+  AuthUserProfile,
+  VerifyAuthTonProofInput,
+} from '../domain/models';
 
 export const authSessionQueryKey = ['auth', 'session'] as const;
 export const authProfileQueryKey = ['auth', 'profile'] as const;
+export const authTonProofPayloadQueryKey = ['auth', 'ton-proof', 'payload'] as const;
 
 async function requestAuth<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   const response = await fetch(input, {
@@ -61,5 +68,16 @@ export function linkAuthWallet(wallet: AuthLinkedWalletInput) {
 export function unlinkAuthWallet() {
   return requestAuth<AuthSessionStatus>('/api/auth/wallet', {
     method: 'DELETE',
+  });
+}
+
+export function fetchTonProofPayload() {
+  return requestAuth<AuthTonProofPayload>('/api/auth/ton-proof/payload');
+}
+
+export function verifyTonProofSession(input: VerifyAuthTonProofInput) {
+  return requestAuth<AuthSessionStatus>('/api/auth/ton-proof/verify', {
+    method: 'POST',
+    body: JSON.stringify(input),
   });
 }
