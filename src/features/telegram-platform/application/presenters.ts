@@ -34,6 +34,18 @@ export function buildPlatformScreenModel(snapshot: PlatformSnapshot): PlatformSc
         ],
       },
       {
+        id: 'serverState',
+        rows: [
+          { field: 'queryLibrary', value: { kind: 'text', text: snapshot.queryLibrary } },
+          { field: 'queryStatus', value: { kind: 'text', text: snapshot.queryStatus } },
+          { field: 'queryFetchStatus', value: { kind: 'text', text: snapshot.queryFetchStatus } },
+          { field: 'queryUpdatedAt', value: { kind: 'text', text: snapshot.queryUpdatedAt } },
+          { field: 'serverTime', value: { kind: 'text', text: snapshot.serverTime } },
+          { field: 'serverRuntime', value: { kind: 'text', text: snapshot.serverRuntime } },
+          { field: 'serverPath', value: { kind: 'text', text: snapshot.serverPath } },
+        ],
+      },
+      {
         id: 'telegramUx',
         rows: [
           { field: 'mainButtonMounted', value: { kind: 'boolean', checked: snapshot.mainButtonMounted } },

@@ -1,10 +1,15 @@
 'use client';
 
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { mainButton, miniApp, swipeBehavior, useLaunchParams, useSignal } from '@tma.js/sdk-react';
 import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo } from 'react';
 
+import {
+  fetchPlatformServerState,
+  platformServerStateQueryKey,
+} from '../application/platformServerState';
 import { buildPlatformScreenModel } from '../application/presenters';
 import { usePlatformStore } from '../application/platformStore';
 import { useTelegramHaptics } from '../application/useTelegramHaptics';
@@ -21,12 +26,17 @@ export function PlatformScreen() {
   const t = useTranslations('platform');
   const locale = useLocale();
   const launchParams = useLaunchParams();
+  const queryClient = useQueryClient();
   const isDark = useSignal(miniApp.isDark);
   const mainButtonMounted = useSignal(mainButton.isMounted);
   const mainButtonVisible = useSignal(mainButton.isVisible);
   const mainButtonText = useSignal(mainButton.text);
   const verticalSwipeSupported = useSignal(swipeBehavior.isSupported);
   const verticalSwipeEnabled = useSignal(swipeBehavior.isVerticalEnabled);
+  const serverStateQuery = useQuery({
+    queryKey: platformServerStateQueryKey,
+    queryFn: fetchPlatformServerState,
+  });
   const haptics = useTelegramHaptics();
   const noticeId = usePlatformStore((state) => state.noticeId);
   const showSkeleton = usePlatformStore((state) => state.showSkeleton);
@@ -83,6 +93,19 @@ export function PlatformScreen() {
         skeletonVisible: showSkeleton,
         mainActionLoading,
         allowVerticalSwipeRequested: allowVerticalSwipe,
+        queryLibrary: '@tanstack/react-query',
+        queryStatus: serverStateQuery.status,
+        queryFetchStatus: serverStateQuery.fetchStatus,
+        queryUpdatedAt: serverStateQuery.dataUpdatedAt
+          ? new Intl.DateTimeFormat(locale, {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            }).format(serverStateQuery.dataUpdatedAt)
+          : undefined,
+        serverTime: serverStateQuery.data?.serverTime,
+        serverRuntime: serverStateQuery.data?.runtime,
+        serverPath: serverStateQuery.data?.path,
         mainButtonMounted,
         mainButtonVisible,
         mainButtonText,
@@ -105,6 +128,12 @@ export function PlatformScreen() {
       mainButtonText,
       mainButtonVisible,
       noticeId,
+      serverStateQuery.data?.path,
+      serverStateQuery.data?.runtime,
+      serverStateQuery.data?.serverTime,
+      serverStateQuery.dataUpdatedAt,
+      serverStateQuery.fetchStatus,
+      serverStateQuery.status,
       showSkeleton,
       t,
       verticalSwipeEnabled,
@@ -168,6 +197,26 @@ export function PlatformScreen() {
               }}
             >
               {t('actions.showSkeleton')}
+            </Button>
+            <Button
+              stretched
+              mode="outline"
+              loading={serverStateQuery.isFetching}
+              onClick={() => {
+                void serverStateQuery.refetch();
+              }}
+            >
+              {t('actions.refetchServerState')}
+            </Button>
+            <Button
+              stretched
+              mode="outline"
+              loading={serverStateQuery.isFetching}
+              onClick={() => {
+                void queryClient.invalidateQueries({ queryKey: platformServerStateQueryKey });
+              }}
+            >
+              {t('actions.invalidateServerState')}
             </Button>
             <Button
               stretched

@@ -194,7 +194,7 @@
   "platform": {
     "intro": {
       "header": "Telegram Platform baseline",
-      "description": "This screen demonstrates Phase 1 frontend platform capabilities: Main Button, haptics, swipe navigation, skeleton loading and app-level feature flags."
+      "description": "This screen demonstrates Phase 1 frontend platform capabilities: Zustand for UI orchestration, TanStack Query for server state, Main Button, haptics, swipe navigation, skeleton loading and app-level feature flags."
     },
     "mainButton": {
       "text": "Run Telegram main action",
@@ -205,6 +205,8 @@
       "successHaptic": "Trigger success haptic",
       "selectionHaptic": "Trigger selection haptic",
       "showSkeleton": "Show skeleton loading",
+      "refetchServerState": "Refetch server state",
+      "invalidateServerState": "Invalidate query cache",
       "enableVerticalSwipe": "Enable vertical swipe",
       "disableVerticalSwipe": "Disable vertical swipe"
     },
@@ -229,6 +231,10 @@
         "header": "State baseline",
         "footer": "This section is driven by a feature-local Zustand store and demonstrates the recommended client-state pattern for app UI orchestration."
       },
+      "serverState": {
+        "header": "Server-state baseline",
+        "footer": "This section is driven by TanStack Query and demonstrates the recommended server-state and cache invalidation pattern."
+      },
       "telegramUx": {
         "header": "Telegram UX",
         "footer": "These rows show the current Main Button, haptics and swipe-navigation state driven by reusable hooks."
@@ -250,6 +256,13 @@
       "skeletonVisible": "Skeleton visible",
       "mainActionLoading": "Main action loading",
       "allowVerticalSwipeRequested": "Requested vertical swipe state",
+      "queryLibrary": "Query library",
+      "queryStatus": "Query status",
+      "queryFetchStatus": "Query fetch status",
+      "queryUpdatedAt": "Query updated at",
+      "serverTime": "Server time",
+      "serverRuntime": "Server runtime",
+      "serverPath": "Server path",
       "mainButtonMounted": "Main Button mounted",
       "mainButtonVisible": "Main Button visible",
       "mainButtonText": "Main Button text",

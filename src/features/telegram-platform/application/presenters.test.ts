@@ -16,6 +16,13 @@ describe('telegram-platform presenters', () => {
       skeletonVisible: false,
       mainActionLoading: true,
       allowVerticalSwipeRequested: true,
+      queryLibrary: '@tanstack/react-query',
+      queryStatus: 'success',
+      queryFetchStatus: 'idle',
+      queryUpdatedAt: '11:45:02',
+      serverTime: '2026-03-11T09:45:02.000Z',
+      serverRuntime: 'node v22.0.0',
+      serverPath: '/api/platform-demo',
       mainButtonMounted: true,
       mainButtonVisible: true,
       mainButtonText: 'Run action',
@@ -31,11 +38,15 @@ describe('telegram-platform presenters', () => {
       field: 'stateLibrary',
       value: { kind: 'text', text: 'zustand' },
     });
-    expect(screen.sections[2]?.rows[2]).toEqual({
+    expect(screen.sections[2]?.rows[0]).toEqual({
+      field: 'queryLibrary',
+      value: { kind: 'text', text: '@tanstack/react-query' },
+    });
+    expect(screen.sections[3]?.rows[2]).toEqual({
       field: 'mainButtonText',
       value: { kind: 'text', text: 'Run action' },
     });
-    expect(screen.sections[3]?.rows[0]).toEqual({
+    expect(screen.sections[4]?.rows[0]).toEqual({
       field: 'applicationDiagnostics',
       value: { kind: 'link', href: '/application' },
     });
