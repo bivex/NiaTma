@@ -81,6 +81,28 @@
       "header": "TON Connect",
       "description": "Чтобы показать данные TON Connect, нужно подключить кошелёк"
     },
+    "actions": {
+      "linkWallet": "Связать подключённый кошелёк с текущей session",
+      "relinkWallet": "Обновить связанный кошелёк в текущей session",
+      "unlinkWallet": "Удалить связанный кошелёк из текущей session"
+    },
+    "messages": {
+      "linkSuccess": "Подключённый кошелёк связан с текущей authenticated session.",
+      "linkError": "Не удалось связать подключённый кошелёк с текущей session.",
+      "unlinkSuccess": "Связанный кошелёк удалён из текущей authenticated session.",
+      "unlinkError": "Не удалось удалить связанный кошелёк из текущей session."
+    },
+    "linking": {
+      "header": "TON-кошелёк, связанный с session",
+      "footer": "Связывание сохраняет текущую wallet identity внутри signed auth session cookie. Это расширение wallet-link, а не полноценный ton_proof backend verification flow.",
+      "signInPrompt": "Сначала войдите, если хотите связать текущий подключённый кошелёк с authenticated session.",
+      "signInLink": "Открыть Auth Foundation",
+      "fields": {
+        "provider": "Провайдер связанного кошелька",
+        "address": "Адрес связанного кошелька",
+        "chain": "Сеть связанного кошелька"
+      }
+    },
     "provider": {
       "aboutWallet": "О кошельке",
       "logoAlt": "Логотип провайдера"
@@ -329,11 +351,15 @@
       "sessionSubject": "Session subject",
       "sessionDisplayName": "Отображаемое имя",
       "sessionUsername": "Username",
+      "sessionWalletProvider": "Провайдер связанного TON-кошелька",
+      "sessionWalletAddress": "Адрес связанного TON-кошелька",
+      "sessionWalletChain": "Сеть связанного TON-кошелька",
       "sessionIssuedAt": "Создана",
       "sessionExpiresAt": "Истекает",
       "initData": "Экран init data",
       "platform": "Platform baseline",
-      "profile": "Protected profile"
+      "profile": "Protected profile",
+      "tonConnect": "TON Connect"
     }
   },
   "profile": {
@@ -355,6 +381,10 @@
         "header": "Identity",
         "footer": "Эти значения нормализованы из authenticated session и безопасны для UI display."
       },
+      "wallet": {
+        "header": "Связанный TON-кошелёк",
+        "footer": "Эти значения отражают TON wallet identity, которая сейчас связана с signed auth session."
+      },
       "session": {
         "header": "Session",
         "footer": "Session timestamps приходят из signed cookie payload, управляемого auth server layer."
@@ -371,10 +401,16 @@
       "displayName": "Отображаемое имя",
       "username": "Username",
       "languageCode": "Код языка",
+      "walletProvider": "Провайдер связанного TON-кошелька",
+      "walletAddress": "Адрес связанного TON-кошелька",
+      "walletChain": "Сеть связанного TON-кошелька",
+      "walletPublicKey": "Публичный ключ связанного TON-кошелька",
+      "walletLinkedAt": "Кошелёк связан",
       "issuedAt": "Создана",
       "expiresAt": "Истекает",
       "auth": "Auth foundation",
-      "platform": "Platform baseline"
+      "platform": "Platform baseline",
+      "tonConnect": "TON Connect"
     }
   }
 }

@@ -81,6 +81,28 @@
       "header": "TON Connect",
       "description": "To display the data related to the TON Connect, it is required to connect your wallet"
     },
+    "actions": {
+      "linkWallet": "Link connected wallet to current session",
+      "relinkWallet": "Refresh linked wallet in current session",
+      "unlinkWallet": "Clear linked wallet from current session"
+    },
+    "messages": {
+      "linkSuccess": "Connected wallet linked to the current authenticated session.",
+      "linkError": "Unable to link the connected wallet to the current session.",
+      "unlinkSuccess": "Linked wallet removed from the current authenticated session.",
+      "unlinkError": "Unable to clear the linked wallet from the current session."
+    },
+    "linking": {
+      "header": "Session-linked TON wallet",
+      "footer": "Linking stores the current wallet identity inside the signed auth session cookie. This is a wallet-link expansion, not a full ton_proof backend verification flow yet.",
+      "signInPrompt": "Sign in first if you want to link the currently connected wallet to your authenticated session.",
+      "signInLink": "Open Auth Foundation",
+      "fields": {
+        "provider": "Linked wallet provider",
+        "address": "Linked wallet address",
+        "chain": "Linked wallet chain"
+      }
+    },
     "provider": {
       "aboutWallet": "About wallet",
       "logoAlt": "Provider logo"
@@ -329,11 +351,15 @@
       "sessionSubject": "Session subject",
       "sessionDisplayName": "Display name",
       "sessionUsername": "Username",
+      "sessionWalletProvider": "Linked TON wallet provider",
+      "sessionWalletAddress": "Linked TON wallet address",
+      "sessionWalletChain": "Linked TON wallet chain",
       "sessionIssuedAt": "Issued at",
       "sessionExpiresAt": "Expires at",
       "initData": "Init data screen",
       "platform": "Platform baseline",
-      "profile": "Protected profile"
+      "profile": "Protected profile",
+      "tonConnect": "TON Connect"
     }
   },
   "profile": {
@@ -355,6 +381,10 @@
         "header": "Identity",
         "footer": "These values are normalized from the authenticated session and safe to use for UI display."
       },
+      "wallet": {
+        "header": "Linked TON wallet",
+        "footer": "These values reflect the TON wallet identity currently linked into the signed auth session."
+      },
       "session": {
         "header": "Session",
         "footer": "Session timestamps come from the signed cookie payload managed by the auth server layer."
@@ -371,10 +401,16 @@
       "displayName": "Display name",
       "username": "Username",
       "languageCode": "Language code",
+      "walletProvider": "Linked TON wallet provider",
+      "walletAddress": "Linked TON wallet address",
+      "walletChain": "Linked TON wallet chain",
+      "walletPublicKey": "Linked TON wallet public key",
+      "walletLinkedAt": "Wallet linked at",
       "issuedAt": "Issued at",
       "expiresAt": "Expires at",
       "auth": "Auth foundation",
-      "platform": "Platform baseline"
+      "platform": "Platform baseline",
+      "tonConnect": "TON Connect"
     }
   }
 }

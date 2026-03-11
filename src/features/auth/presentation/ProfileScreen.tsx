@@ -56,10 +56,16 @@ export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserPro
         displayName: undefined,
         username: undefined,
         languageCode: undefined,
+        walletProvider: undefined,
+        walletAddress: undefined,
+        walletChain: undefined,
+        walletPublicKey: undefined,
+        walletLinkedAt: undefined,
         issuedAt: t('status.loading'),
         expiresAt: t('status.loading'),
         authHref: routePaths.auth,
         platformHref: routePaths.platform,
+        tonConnectHref: routePaths.tonConnect,
       });
     }
 
@@ -70,10 +76,16 @@ export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserPro
       displayName: profile.displayName,
       username: profile.username,
       languageCode: profile.languageCode,
+      walletProvider: profile.wallet?.provider,
+      walletAddress: profile.wallet?.address,
+      walletChain: profile.wallet?.chain,
+      walletPublicKey: profile.wallet?.publicKey,
+      walletLinkedAt: profile.wallet ? timeFormatter.format(profile.wallet.linkedAt) : undefined,
       issuedAt: timeFormatter.format(profile.issuedAt),
       expiresAt: timeFormatter.format(profile.expiresAt),
       authHref: routePaths.auth,
       platformHref: routePaths.platform,
+      tonConnectHref: routePaths.tonConnect,
     });
   }, [profileQuery.data, t, timeFormatter]);
 

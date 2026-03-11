@@ -76,13 +76,56 @@ describe('auth flow e2e', () => {
     expect(profile.subject).toBe('dev:local-preview');
     expect(profile.displayName).toBe('Local Preview');
 
+    const walletLinkResponse = await fetch(`${baseUrl}/api/auth/wallet`, {
+      method: 'POST',
+      headers: {
+        cookie: sessionCookie || '',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        address: 'EQD123',
+        chain: 'testnet',
+        publicKey: 'pub',
+        provider: 'Tonkeeper',
+      }),
+    });
+    expect(walletLinkResponse.status).toBe(200);
+
+    const linkedSessionCookie = readSessionCookie(walletLinkResponse) || sessionCookie;
+    expect(linkedSessionCookie).toContain('nia_auth_session=');
+
+    const linkedProfileApiResponse = await fetch(`${baseUrl}/api/auth/profile`, {
+      headers: { cookie: linkedSessionCookie || '' },
+    });
+    expect(linkedProfileApiResponse.status).toBe(200);
+
+    const linkedProfile = (await linkedProfileApiResponse.json()) as {
+      wallet?: { address?: string; provider?: string };
+    };
+    expect(linkedProfile.wallet?.address).toBe('EQD123');
+    expect(linkedProfile.wallet?.provider).toBe('Tonkeeper');
+
     const profilePageResponse = await fetch(`${baseUrl}/profile`, {
-      headers: { cookie: sessionCookie || '' },
+      headers: { cookie: linkedSessionCookie || '' },
     });
     expect(profilePageResponse.status).toBe(200);
 
     const profilePageHtml = await profilePageResponse.text();
     expect(profilePageHtml).toContain('Protected user profile');
     expect(profilePageHtml).toContain('dev:local-preview');
+    expect(profilePageHtml).toContain('EQD123');
+
+    const walletUnlinkResponse = await fetch(`${baseUrl}/api/auth/wallet`, {
+      method: 'DELETE',
+      headers: { cookie: linkedSessionCookie || '' },
+    });
+    expect(walletUnlinkResponse.status).toBe(200);
+
+    const unlinkedSessionCookie = readSessionCookie(walletUnlinkResponse) || linkedSessionCookie;
+    const unlinkedProfileApiResponse = await fetch(`${baseUrl}/api/auth/profile`, {
+      headers: { cookie: unlinkedSessionCookie || '' },
+    });
+    const unlinkedProfile = (await unlinkedProfileApiResponse.json()) as { wallet?: unknown };
+    expect(unlinkedProfile.wallet).toBeUndefined();
   });
 });

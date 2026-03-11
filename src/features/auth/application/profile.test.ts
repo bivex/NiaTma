@@ -27,6 +27,7 @@ describe('auth profile', () => {
       languageCode: 'en',
       issuedAt: 1_000,
       expiresAt: 2_000,
+      wallet: undefined,
     });
   });
 
@@ -38,17 +39,27 @@ describe('auth profile', () => {
       displayName: 'Nia Bot',
       username: 'nia',
       languageCode: 'en',
+      walletProvider: 'Tonkeeper',
+      walletAddress: 'EQD123',
+      walletChain: 'testnet',
+      walletPublicKey: 'pub',
+      walletLinkedAt: '11:30',
       issuedAt: '11:00',
       expiresAt: '12:00',
       authHref: '/auth',
       platformHref: '/platform',
+      tonConnectHref: '/ton-connect',
     });
 
     expect(screen.sections[0]?.rows[3]).toEqual({
       field: 'displayName',
       value: { kind: 'text', text: 'Nia Bot' },
     });
-    expect(screen.sections[2]?.rows[0]).toEqual({
+    expect(screen.sections[1]?.rows[0]).toEqual({
+      field: 'walletProvider',
+      value: { kind: 'text', text: 'Tonkeeper' },
+    });
+    expect(screen.sections[3]?.rows[0]).toEqual({
       field: 'auth',
       value: { kind: 'link', href: '/auth' },
     });

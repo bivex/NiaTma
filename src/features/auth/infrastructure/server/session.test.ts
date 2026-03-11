@@ -11,6 +11,13 @@ describe('auth session token', () => {
       nowMs: 1_000,
     });
 
+    session.wallet = {
+      address: 'EQD123',
+      chain: 'testnet',
+      provider: 'Tonkeeper',
+      linkedAt: 1_100,
+    };
+
     const token = encodeAuthSession(session, 'secret');
 
     expect(decodeAuthSession(token, 'secret', 1_500)).toEqual({ valid: true, session });

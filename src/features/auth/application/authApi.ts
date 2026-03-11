@@ -1,4 +1,4 @@
-import type { AuthSessionStatus, AuthUserProfile } from '../domain/models';
+import type { AuthLinkedWalletInput, AuthSessionStatus, AuthUserProfile } from '../domain/models';
 
 export const authSessionQueryKey = ['auth', 'session'] as const;
 export const authProfileQueryKey = ['auth', 'profile'] as const;
@@ -48,5 +48,18 @@ export function signInWithDevLogin() {
 export function logoutAuthSession() {
   return requestAuth<AuthSessionStatus>('/api/auth/logout', {
     method: 'POST',
+  });
+}
+
+export function linkAuthWallet(wallet: AuthLinkedWalletInput) {
+  return requestAuth<AuthSessionStatus>('/api/auth/wallet', {
+    method: 'POST',
+    body: JSON.stringify(wallet),
+  });
+}
+
+export function unlinkAuthWallet() {
+  return requestAuth<AuthSessionStatus>('/api/auth/wallet', {
+    method: 'DELETE',
   });
 }

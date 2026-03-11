@@ -2,6 +2,17 @@ import type { DisplayDataValue } from '@/shared/domain/display-data';
 
 export type AuthProvider = 'telegram' | 'dev';
 
+export interface AuthLinkedWalletInput {
+  address: string;
+  chain?: string;
+  publicKey?: string;
+  provider?: string;
+}
+
+export interface AuthLinkedWallet extends AuthLinkedWalletInput {
+  linkedAt: number;
+}
+
 export interface AuthSessionUser {
   id: string;
   firstName?: string;
@@ -16,6 +27,7 @@ export interface AuthSession {
   issuedAt: number;
   expiresAt: number;
   user: AuthSessionUser;
+  wallet?: AuthLinkedWallet;
 }
 
 export interface AuthCapabilities {
@@ -42,11 +54,15 @@ export type AuthFieldId =
   | 'sessionSubject'
   | 'sessionDisplayName'
   | 'sessionUsername'
+  | 'sessionWalletProvider'
+  | 'sessionWalletAddress'
+  | 'sessionWalletChain'
   | 'sessionIssuedAt'
   | 'sessionExpiresAt'
   | 'initData'
   | 'platform'
-  | 'profile';
+  | 'profile'
+  | 'tonConnect';
 
 export interface AuthRow {
   field: AuthFieldId;
@@ -72,11 +88,15 @@ export interface AuthScreenSnapshot {
   sessionSubject?: string;
   sessionDisplayName?: string;
   sessionUsername?: string;
+  sessionWalletProvider?: string;
+  sessionWalletAddress?: string;
+  sessionWalletChain?: string;
   sessionIssuedAt?: string;
   sessionExpiresAt?: string;
   initDataHref: string;
   platformHref: string;
   profileHref: string;
+  tonConnectHref: string;
 }
 
 export interface AuthUserProfile {
@@ -88,9 +108,10 @@ export interface AuthUserProfile {
   languageCode?: string;
   issuedAt: number;
   expiresAt: number;
+  wallet?: AuthLinkedWallet;
 }
 
-export type ProfileSectionId = 'identity' | 'session' | 'links';
+export type ProfileSectionId = 'identity' | 'wallet' | 'session' | 'links';
 
 export type ProfileFieldId =
   | 'subject'
@@ -99,10 +120,16 @@ export type ProfileFieldId =
   | 'displayName'
   | 'username'
   | 'languageCode'
+  | 'walletProvider'
+  | 'walletAddress'
+  | 'walletChain'
+  | 'walletPublicKey'
+  | 'walletLinkedAt'
   | 'issuedAt'
   | 'expiresAt'
   | 'auth'
-  | 'platform';
+  | 'platform'
+  | 'tonConnect';
 
 export interface ProfileRow {
   field: ProfileFieldId;
@@ -125,8 +152,14 @@ export interface ProfileScreenSnapshot {
   displayName?: string;
   username?: string;
   languageCode?: string;
+  walletProvider?: string;
+  walletAddress?: string;
+  walletChain?: string;
+  walletPublicKey?: string;
+  walletLinkedAt?: string;
   issuedAt: string;
   expiresAt: string;
   authHref: string;
   platformHref: string;
+  tonConnectHref: string;
 }
