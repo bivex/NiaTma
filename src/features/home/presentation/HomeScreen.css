@@ -1,0 +1,25 @@
+.home-screen__section-copy {
+  padding: 16px 24px 8px;
+}
+
+.home-screen__section-title,
+.home-screen__cell-title {
+  color: var(--tg-theme-text-color, #11181c);
+}
+
+.home-screen__section-description,
+.home-screen__cell-subtitle {
+  color: var(--tg-theme-text-color, #11181c);
+  opacity: 0.78;
+}
+
+.home-screen__cell-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-screen__cell-title,
+.home-screen__cell-subtitle {
+  display: block;
+}

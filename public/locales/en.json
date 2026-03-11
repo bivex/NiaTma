@@ -33,7 +33,8 @@
     },
     "locale": {
       "header": "Application supports i18n",
-      "footer": "You can select a different language from the dropdown menu."
+      "footer": "You can select a different language from the dropdown menu.",
+      "selectLabel": "Application language"
     }
   },
   "launchData": {

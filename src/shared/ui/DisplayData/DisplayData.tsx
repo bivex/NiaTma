@@ -23,7 +23,13 @@ export const DisplayData: FC<DisplayDataProps> = ({ header, footer, rows }) => {
   const t = useTranslations('shared.displayData');
 
   return (
-    <Section header={header} footer={footer}>
+    <Section>
+      {(header || footer) && (
+        <div className={e('meta')}>
+          {header && <div className={e('header')}>{header}</div>}
+          {footer && <div className={e('footer')}>{footer}</div>}
+        </div>
+      )}
       {rows.map((item) => {
         let valueNode: ReactNode;
 

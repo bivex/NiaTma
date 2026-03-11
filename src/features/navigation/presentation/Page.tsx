@@ -12,5 +12,5 @@ export function Page({
 }>) {
   usePageNavigation(back);
 
-  return <>{children}</>;
+  return <main>{children}</main>;
 }

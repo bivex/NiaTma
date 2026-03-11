@@ -1,7 +1,6 @@
 'use client';
 
 import { type PropsWithChildren } from 'react';
-import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 
 import { useAppShell } from '@/features/app-shell/application/useAppShell';
@@ -15,14 +14,9 @@ function RootInner({ children }: PropsWithChildren) {
   const viewModel = useAppShell();
 
   return (
-    <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
-      <AppRoot
-        appearance={viewModel.appearance}
-        platform={viewModel.platform}
-      >
-        {children}
-      </AppRoot>
-    </TonConnectUIProvider>
+    <AppRoot appearance={viewModel.appearance} platform={viewModel.platform}>
+      {children}
+    </AppRoot>
   );
 }
 
@@ -34,6 +28,8 @@ export function Root(props: PropsWithChildren) {
       <RootInner {...props} />
     </ErrorBoundary>
   ) : (
-    <div className="root__loading">Loading</div>
+    <div className="root__loading" aria-live="polite" role="status">
+      Loading
+    </div>
   );
 }

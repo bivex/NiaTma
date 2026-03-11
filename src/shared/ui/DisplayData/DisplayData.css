@@ -1,5 +1,16 @@
+.display-data__meta {
+  padding: 16px 24px 8px;
+}
+
 .display-data__header {
   font-weight: 400;
+  color: var(--tg-theme-text-color, #11181c);
+}
+
+.display-data__footer {
+  margin-top: 4px;
+  color: var(--tg-theme-text-color, #11181c);
+  opacity: 0.78;
 }
 
 .display-data__line {
@@ -7,7 +18,8 @@
 }
 
 .display-data__line-title {
-  color: var(--tg-theme-subtitle-text-color);
+  color: var(--tg-theme-text-color, #11181c);
+  opacity: 0.78;
 }
 
 .display-data__line-value {
