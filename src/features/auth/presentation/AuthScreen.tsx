@@ -4,7 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { initData, useRawInitData, useSignal } from '@tma.js/sdk-react';
 import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   authSessionQueryKey,
@@ -13,6 +14,8 @@ import {
   signInWithDevLogin,
   signInWithTelegram,
 } from '../application/authApi';
+import { sanitizePersistedAuthSessionStatus, useAuthStore } from '../application/authStore';
+import { resolvePostAuthPath } from '../application/navigation';
 import { buildAuthScreenModel } from '../application/presenters';
 import { routePaths } from '@/features/navigation/domain/routes';
 import { Page } from '@/features/navigation/presentation/Page';
@@ -23,14 +26,30 @@ import './AuthScreen.css';
 export function AuthScreen() {
   const t = useTranslations('auth');
   const locale = useLocale();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const rawInitData = useRawInitData();
   const initDataUser = useSignal(initData.user);
   const [notice, setNotice] = useState<string>();
+  const persistedSessionStatus = useAuthStore((state) => state.sessionStatus);
+  const syncSessionStatus = useAuthStore((state) => state.syncSessionStatus);
+  const postAuthPath = useMemo(() => resolvePostAuthPath(searchParams.get('next')), [searchParams]);
+  const initialSessionStatus = useMemo(
+    () => sanitizePersistedAuthSessionStatus(persistedSessionStatus),
+    [persistedSessionStatus],
+  );
   const sessionQuery = useQuery({
     queryKey: authSessionQueryKey,
     queryFn: fetchAuthSession,
+    initialData: initialSessionStatus,
   });
+
+  useEffect(() => {
+    if (sessionQuery.data) {
+      syncSessionStatus(sessionQuery.data);
+    }
+  }, [sessionQuery.data, syncSessionStatus]);
 
   const refreshSession = async () => {
     await queryClient.invalidateQueries({ queryKey: authSessionQueryKey });
@@ -38,9 +57,14 @@ export function AuthScreen() {
 
   const telegramMutation = useMutation({
     mutationFn: () => signInWithTelegram(rawInitData || ''),
-    onSuccess: async () => {
+    onSuccess: async (status) => {
+      syncSessionStatus(status);
       setNotice(t('messages.telegramSuccess'));
       await refreshSession();
+
+      if (postAuthPath) {
+        router.replace(postAuthPath);
+      }
     },
     onError: () => {
       setNotice(t('messages.telegramError'));
@@ -49,9 +73,14 @@ export function AuthScreen() {
 
   const devLoginMutation = useMutation({
     mutationFn: signInWithDevLogin,
-    onSuccess: async () => {
+    onSuccess: async (status) => {
+      syncSessionStatus(status);
       setNotice(t('messages.devSuccess'));
       await refreshSession();
+
+      if (postAuthPath) {
+        router.replace(postAuthPath);
+      }
     },
     onError: () => {
       setNotice(t('messages.devError'));
@@ -60,7 +89,8 @@ export function AuthScreen() {
 
   const logoutMutation = useMutation({
     mutationFn: logoutAuthSession,
-    onSuccess: async () => {
+    onSuccess: async (status) => {
+      syncSessionStatus(status);
       setNotice(t('messages.logoutSuccess'));
       await refreshSession();
     },

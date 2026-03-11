@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 
+import { buildAuthRedirectPath } from '@/features/auth/application/navigation';
 import { toAuthUserProfile } from '@/features/auth/application/profile';
 import { createAuthConfig } from '@/features/auth/infrastructure/server/config';
 import { readAuthenticatedAuthSession } from '@/features/auth/infrastructure/server/status';
@@ -11,7 +12,7 @@ export default async function ProfilePage() {
   const { session } = await readAuthenticatedAuthSession(config);
 
   if (!session) {
-    redirect(routePaths.auth);
+    redirect(buildAuthRedirectPath(routePaths.profile));
   }
 
   return <ProfileScreen initialProfile={toAuthUserProfile(session)} />;

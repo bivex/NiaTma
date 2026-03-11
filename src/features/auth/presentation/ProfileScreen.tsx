@@ -3,9 +3,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { authProfileQueryKey, fetchAuthProfile } from '../application/authApi';
+import { sanitizePersistedAuthProfile, useAuthStore } from '../application/authStore';
 import { buildProfileScreenModel } from '../application/profile';
 import type { AuthUserProfile } from '../domain/models';
 import { routePaths } from '@/features/navigation/domain/routes';
@@ -17,11 +18,20 @@ import './ProfileScreen.css';
 export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserProfile }) {
   const t = useTranslations('profile');
   const locale = useLocale();
+  const persistedProfile = useAuthStore((state) => state.profile);
+  const syncProfile = useAuthStore((state) => state.syncProfile);
+  const initialPersistedProfile = useMemo(() => sanitizePersistedAuthProfile(persistedProfile), [persistedProfile]);
   const profileQuery = useQuery({
     queryKey: authProfileQueryKey,
     queryFn: fetchAuthProfile,
-    initialData: initialProfile,
+    initialData: initialProfile ?? initialPersistedProfile,
   });
+
+  useEffect(() => {
+    if (profileQuery.data) {
+      syncProfile(profileQuery.data);
+    }
+  }, [profileQuery.data, syncProfile]);
 
   const timeFormatter = useMemo(
     () =>
