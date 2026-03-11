@@ -1,7 +1,25 @@
 import { emitEvent, isTMA, mockTelegramEnv } from '@tma.js/sdk-react';
 
+export function isLocalPreviewHost(hostname: string): boolean {
+  return (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '0.0.0.0' ||
+    hostname === '::1' ||
+    hostname === '[::1]' ||
+    hostname.endsWith('.local') ||
+    hostname.startsWith('192.168.') ||
+    hostname.startsWith('10.') ||
+    /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname)
+  );
+}
+
 export async function mockEnv(): Promise<void> {
-  return process.env.NODE_ENV !== 'development'
+  const hostname = globalThis.location?.hostname;
+  const shouldMockLocalPreview =
+    typeof hostname === 'string' && isLocalPreviewHost(hostname);
+
+  return process.env.NODE_ENV !== 'development' && !shouldMockLocalPreview
     ? undefined
     : isTMA('complete').then((isTma) => {
         if (!isTma) {
@@ -60,7 +78,7 @@ export async function mockEnv(): Promise<void> {
           });
 
           console.info(
-            '⚠️ Telegram environment was mocked for local development outside Telegram.',
+            '⚠️ Telegram environment was mocked for local preview outside Telegram.',
           );
         }
       });

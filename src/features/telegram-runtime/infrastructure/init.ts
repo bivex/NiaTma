@@ -12,6 +12,12 @@ import {
   viewport,
 } from '@tma.js/sdk-react';
 
+const isDevelopmentBuild = process.env.NODE_ENV === 'development';
+
+export function shouldInitEruda(eruda: boolean, isDevelopment = isDevelopmentBuild): boolean {
+  return isDevelopment && eruda;
+}
+
 export async function initTelegramRuntime(options: {
   debug: boolean;
   eruda: boolean;
@@ -20,10 +26,9 @@ export async function initTelegramRuntime(options: {
   setDebug(options.debug);
   initSDK();
 
-  if (options.eruda) {
-    void import('eruda').then(({ default: eruda }) => {
-      eruda.init();
-      eruda.position({ x: window.innerWidth - 50, y: 0 });
+  if (isDevelopmentBuild && options.eruda) {
+    void import('./eruda').then(({ mountEruda }) => {
+      void mountEruda();
     });
   }
 
