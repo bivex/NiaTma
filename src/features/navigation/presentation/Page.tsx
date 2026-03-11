@@ -7,10 +7,14 @@ import { usePageNavigation } from '@/features/navigation/application/usePageNavi
 export function Page({
   children,
   back = true,
+  swipeBack = false,
+  allowVerticalSwipe = true,
 }: PropsWithChildren<{
   back?: boolean;
+  swipeBack?: boolean;
+  allowVerticalSwipe?: boolean;
 }>) {
-  usePageNavigation(back);
+  usePageNavigation({ back, swipeBack, allowVerticalSwipe });
 
   return <main>{children}</main>;
 }

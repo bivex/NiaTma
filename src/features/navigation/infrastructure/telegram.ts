@@ -1,4 +1,4 @@
-import { backButton, openLink } from '@tma.js/sdk-react';
+import { backButton, openLink, swipeBehavior } from '@tma.js/sdk-react';
 
 export function showBackNavigation() {
   backButton.show();
@@ -14,4 +14,20 @@ export function onBackNavigation(callback: () => void) {
 
 export function openExternalLink(url: string) {
   openLink(url);
+}
+
+export function mountSwipeBehavior() {
+  swipeBehavior.mount();
+}
+
+export function unmountSwipeBehavior() {
+  swipeBehavior.unmount();
+}
+
+export function enableVerticalSwipe() {
+  swipeBehavior.enableVertical();
+}
+
+export function disableVerticalSwipe() {
+  swipeBehavior.disableVertical();
 }

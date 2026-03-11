@@ -1,0 +1,25 @@
+.platform-screen__copy {
+  padding: 16px 24px 8px;
+}
+
+.platform-screen__title {
+  color: var(--tg-theme-text-color, #11181c);
+}
+
+.platform-screen__description,
+.platform-screen__notice {
+  margin-top: 4px;
+  color: var(--tg-theme-text-color, #11181c);
+  opacity: 0.92;
+}
+
+.platform-screen__actions {
+  display: grid;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.platform-screen__button-primary {
+  background-color: #0057b8;
+  color: #ffffff;
+}

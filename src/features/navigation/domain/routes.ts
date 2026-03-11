@@ -3,6 +3,7 @@ export const routePaths = {
   application: '/application',
   initData: '/init-data',
   launchParams: '/launch-params',
+  platform: '/platform',
   themeParams: '/theme-params',
   tonConnect: '/ton-connect',
 } as const;

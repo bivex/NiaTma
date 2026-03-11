@@ -15,6 +15,10 @@
         "title": "Browser Application",
         "subtitle": "Manifest, storage, service worker and browser capability diagnostics"
       },
+      "platform": {
+        "title": "Telegram Platform",
+        "subtitle": "Main Button, haptics, swipe navigation, skeleton loading and app config"
+      },
       "tonConnect": {
         "title": "TON Connect",
         "subtitle": "Connect your TON wallet",
@@ -185,6 +189,66 @@
       "backForwardCache": "Back/forward cache",
       "bounceTrackingMitigations": "Bounce tracking mitigations",
       "backgroundServices": "Background services"
+    }
+  },
+  "platform": {
+    "intro": {
+      "header": "Telegram Platform baseline",
+      "description": "This screen demonstrates Phase 1 frontend platform capabilities: Main Button, haptics, swipe navigation, skeleton loading and app-level feature flags."
+    },
+    "mainButton": {
+      "text": "Run Telegram main action",
+      "loading": "Processing…"
+    },
+    "actions": {
+      "impactHaptic": "Trigger impact haptic",
+      "successHaptic": "Trigger success haptic",
+      "selectionHaptic": "Trigger selection haptic",
+      "showSkeleton": "Show skeleton loading",
+      "enableVerticalSwipe": "Enable vertical swipe",
+      "disableVerticalSwipe": "Disable vertical swipe"
+    },
+    "messages": {
+      "idle": "",
+      "mainButton": "Telegram Main Button click handler executed successfully.",
+      "impact": "Impact haptic was triggered.",
+      "success": "Success haptic was triggered.",
+      "selection": "Selection haptic was triggered.",
+      "skeleton": "Skeleton loading is shown for a short simulated request.",
+      "verticalSwipeEnabled": "Vertical swipe-to-close is enabled for the current screen.",
+      "verticalSwipeDisabled": "Vertical swipe-to-close is disabled for the current screen.",
+      "unsupported": "The current Telegram/browser environment does not expose this capability."
+    },
+    "sections": {
+      "runtime": {
+        "header": "Runtime",
+        "footer": "App config values and Telegram launch parameters are centralized here to make environment handling explicit."
+      },
+      "telegramUx": {
+        "header": "Telegram UX",
+        "footer": "These rows show the current Main Button, haptics and swipe-navigation state driven by reusable hooks."
+      },
+      "links": {
+        "header": "Related screens",
+        "footer": "Use these routes to inspect offline/application diagnostics and wallet integration."
+      }
+    },
+    "fields": {
+      "appName": "App name",
+      "environment": "Environment",
+      "platform": "Telegram platform",
+      "version": "Mini Apps version",
+      "locale": "Locale",
+      "appearance": "Appearance",
+      "mainButtonMounted": "Main Button mounted",
+      "mainButtonVisible": "Main Button visible",
+      "mainButtonText": "Main Button text",
+      "hapticsSupported": "Haptics supported",
+      "verticalSwipeSupported": "Vertical swipe behavior supported",
+      "verticalSwipeEnabled": "Vertical swipe enabled",
+      "swipeBackEnabled": "Swipe-back navigation enabled",
+      "applicationDiagnostics": "Application diagnostics",
+      "tonConnect": "TON Connect"
     }
   }
 }
