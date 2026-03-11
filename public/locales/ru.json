@@ -15,6 +15,10 @@
         "title": "Browser Application",
         "subtitle": "Manifest, storage, service worker и диагностика browser capabilities"
       },
+      "auth": {
+        "title": "Auth Foundation",
+        "subtitle": "Telegram initData verification, signed session cookie и local preview login"
+      },
       "platform": {
         "title": "Telegram Platform",
         "subtitle": "Main Button, haptics, swipe navigation, skeleton loading и app config"
@@ -272,6 +276,59 @@
       "swipeBackEnabled": "Swipe-back navigation включён",
       "applicationDiagnostics": "Application diagnostics",
       "tonConnect": "TON Connect"
+    }
+  },
+  "auth": {
+    "intro": {
+      "header": "Phase 2 auth foundation",
+      "description": "Этот экран показывает server-side Telegram initData verification, signed session cookies, чтение session status, logout и local preview login вне Telegram."
+    },
+    "actions": {
+      "telegramSignIn": "Войти через Telegram initData",
+      "devSignIn": "Использовать local preview login",
+      "refreshSession": "Обновить session",
+      "logout": "Выйти"
+    },
+    "messages": {
+      "telegramSuccess": "Telegram session успешно создана.",
+      "telegramError": "Не удалось создать Telegram session в текущем окружении.",
+      "devSuccess": "Local preview session успешно создана.",
+      "devError": "Local preview login недоступен в текущей конфигурации сервера.",
+      "logoutSuccess": "Session успешно очищена.",
+      "logoutError": "Не удалось очистить текущую session."
+    },
+    "status": {
+      "loading": "loading",
+      "anonymous": "anonymous"
+    },
+    "sections": {
+      "capabilities": {
+        "header": "Capabilities",
+        "footer": "Эти значения показывают, доступны ли Telegram auth verification и fallback preview login на текущем сервере."
+      },
+      "session": {
+        "header": "Session",
+        "footer": "Signed session cookies имеют HttpOnly и читаются через отдельный server route."
+      },
+      "links": {
+        "header": "Связанные экраны",
+        "footer": "Используйте экраны init data и platform, чтобы смотреть raw Telegram context и frontend platform baseline."
+      }
+    },
+    "fields": {
+      "rawInitDataPresent": "Raw initData есть на клиенте",
+      "telegramAuthAvailable": "Telegram auth доступен на сервере",
+      "sessionSigningConfigured": "Session signing настроен",
+      "devLoginAvailable": "Local preview login доступен",
+      "sessionStatus": "Статус session",
+      "sessionProvider": "Провайдер session",
+      "sessionSubject": "Session subject",
+      "sessionDisplayName": "Отображаемое имя",
+      "sessionUsername": "Username",
+      "sessionIssuedAt": "Создана",
+      "sessionExpiresAt": "Истекает",
+      "initData": "Экран init data",
+      "platform": "Platform baseline"
     }
   }
 }

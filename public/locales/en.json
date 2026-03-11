@@ -15,6 +15,10 @@
         "title": "Browser Application",
         "subtitle": "Manifest, storage, service worker and browser capability diagnostics"
       },
+      "auth": {
+        "title": "Auth Foundation",
+        "subtitle": "Telegram initData verification, signed session cookie and local preview login"
+      },
       "platform": {
         "title": "Telegram Platform",
         "subtitle": "Main Button, haptics, swipe navigation, skeleton loading and app config"
@@ -272,6 +276,59 @@
       "swipeBackEnabled": "Swipe-back navigation enabled",
       "applicationDiagnostics": "Application diagnostics",
       "tonConnect": "TON Connect"
+    }
+  },
+  "auth": {
+    "intro": {
+      "header": "Phase 2 auth foundation",
+      "description": "This screen demonstrates server-side Telegram initData verification, signed session cookies, session status fetching, logout, and local preview login outside Telegram."
+    },
+    "actions": {
+      "telegramSignIn": "Sign in with Telegram initData",
+      "devSignIn": "Use local preview login",
+      "refreshSession": "Refresh session",
+      "logout": "Logout"
+    },
+    "messages": {
+      "telegramSuccess": "Telegram session created successfully.",
+      "telegramError": "Unable to create a Telegram session in the current environment.",
+      "devSuccess": "Local preview session created successfully.",
+      "devError": "Local preview login is not available in the current server configuration.",
+      "logoutSuccess": "Session cleared successfully.",
+      "logoutError": "Unable to clear the current session."
+    },
+    "status": {
+      "loading": "loading",
+      "anonymous": "anonymous"
+    },
+    "sections": {
+      "capabilities": {
+        "header": "Capabilities",
+        "footer": "These values show whether Telegram auth verification and fallback preview login are available on the current server."
+      },
+      "session": {
+        "header": "Session",
+        "footer": "Signed session cookies are HttpOnly and read through a dedicated server route."
+      },
+      "links": {
+        "header": "Related screens",
+        "footer": "Use the init data and platform screens to inspect the raw Telegram context and frontend platform baseline."
+      }
+    },
+    "fields": {
+      "rawInitDataPresent": "Raw initData present in client",
+      "telegramAuthAvailable": "Telegram auth available on server",
+      "sessionSigningConfigured": "Session signing configured",
+      "devLoginAvailable": "Local preview login available",
+      "sessionStatus": "Session status",
+      "sessionProvider": "Session provider",
+      "sessionSubject": "Session subject",
+      "sessionDisplayName": "Display name",
+      "sessionUsername": "Username",
+      "sessionIssuedAt": "Issued at",
+      "sessionExpiresAt": "Expires at",
+      "initData": "Init data screen",
+      "platform": "Platform baseline"
     }
   }
 }

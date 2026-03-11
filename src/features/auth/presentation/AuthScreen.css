@@ -1,0 +1,25 @@
+.auth-screen__copy {
+  padding: 16px 24px 8px;
+}
+
+.auth-screen__title {
+  color: var(--tg-theme-text-color, #11181c);
+}
+
+.auth-screen__description,
+.auth-screen__notice {
+  margin-top: 4px;
+  color: var(--tg-theme-text-color, #11181c);
+  opacity: 0.92;
+}
+
+.auth-screen__actions {
+  display: grid;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.auth-screen__button-primary {
+  background-color: #0a7c4a;
+  color: #ffffff;
+}

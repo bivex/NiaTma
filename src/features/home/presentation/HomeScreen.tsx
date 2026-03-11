@@ -47,6 +47,14 @@ export function HomeScreen() {
               </div>
             </Cell>
           </AppLink>
+          <AppLink href={routePaths.auth}>
+            <Cell>
+              <div className="home-screen__cell-copy">
+                <span className="home-screen__cell-title">{t('features.auth.title')}</span>
+                <span className="home-screen__cell-subtitle">{t('features.auth.subtitle')}</span>
+              </div>
+            </Cell>
+          </AppLink>
           <AppLink href={routePaths.platform}>
             <Cell>
               <div className="home-screen__cell-copy">
