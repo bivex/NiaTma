@@ -15,6 +15,25 @@ export function buildPlatformScreenModel(snapshot: PlatformSnapshot): PlatformSc
         ],
       },
       {
+        id: 'state',
+        rows: [
+          { field: 'stateLibrary', value: { kind: 'text', text: snapshot.stateLibrary } },
+          { field: 'notice', value: { kind: 'text', text: snapshot.notice } },
+          {
+            field: 'skeletonVisible',
+            value: { kind: 'boolean', checked: snapshot.skeletonVisible },
+          },
+          {
+            field: 'mainActionLoading',
+            value: { kind: 'boolean', checked: snapshot.mainActionLoading },
+          },
+          {
+            field: 'allowVerticalSwipeRequested',
+            value: { kind: 'boolean', checked: snapshot.allowVerticalSwipeRequested },
+          },
+        ],
+      },
+      {
         id: 'telegramUx',
         rows: [
           { field: 'mainButtonMounted', value: { kind: 'boolean', checked: snapshot.mainButtonMounted } },

@@ -3,9 +3,10 @@
 import { mainButton, miniApp, swipeBehavior, useLaunchParams, useSignal } from '@tma.js/sdk-react';
 import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { buildPlatformScreenModel } from '../application/presenters';
+import { usePlatformStore } from '../application/platformStore';
 import { useTelegramHaptics } from '../application/useTelegramHaptics';
 import { useTelegramMainButton } from '../application/useTelegramMainButton';
 import { routePaths } from '@/features/navigation/domain/routes';
@@ -15,17 +16,6 @@ import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
 import { ScreenSkeleton } from '@/shared/ui/ScreenSkeleton/ScreenSkeleton';
 
 import './PlatformScreen.css';
-
-type NoticeId =
-  | 'idle'
-  | 'mainButton'
-  | 'impact'
-  | 'success'
-  | 'selection'
-  | 'skeleton'
-  | 'verticalSwipeEnabled'
-  | 'verticalSwipeDisabled'
-  | 'unsupported';
 
 export function PlatformScreen() {
   const t = useTranslations('platform');
@@ -38,12 +28,16 @@ export function PlatformScreen() {
   const verticalSwipeSupported = useSignal(swipeBehavior.isSupported);
   const verticalSwipeEnabled = useSignal(swipeBehavior.isVerticalEnabled);
   const haptics = useTelegramHaptics();
-  const [noticeId, setNoticeId] = useState<NoticeId>('idle');
-  const [showSkeleton, setShowSkeleton] = useState(false);
-  const [mainActionLoading, setMainActionLoading] = useState(false);
-  const [allowVerticalSwipe, setAllowVerticalSwipe] = useState(
-    appConfig.features.verticalSwipeBehavior,
-  );
+  const noticeId = usePlatformStore((state) => state.noticeId);
+  const showSkeleton = usePlatformStore((state) => state.showSkeleton);
+  const mainActionLoading = usePlatformStore((state) => state.mainActionLoading);
+  const allowVerticalSwipe = usePlatformStore((state) => state.allowVerticalSwipe);
+  const setNotice = usePlatformStore((state) => state.setNotice);
+  const startMainAction = usePlatformStore((state) => state.startMainAction);
+  const finishMainAction = usePlatformStore((state) => state.finishMainAction);
+  const showSkeletonPreview = usePlatformStore((state) => state.showSkeletonPreview);
+  const hideSkeletonPreview = usePlatformStore((state) => state.hideSkeletonPreview);
+  const toggleAllowVerticalSwipe = usePlatformStore((state) => state.toggleAllowVerticalSwipe);
 
   useEffect(() => {
     if (!showSkeleton) {
@@ -51,21 +45,20 @@ export function PlatformScreen() {
     }
 
     const timeout = window.setTimeout(() => {
-      setShowSkeleton(false);
+      hideSkeletonPreview();
     }, 1200);
 
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [showSkeleton]);
+  }, [hideSkeletonPreview, showSkeleton]);
 
   const handleMainButton = useCallback(async () => {
-    setMainActionLoading(true);
-    setNoticeId('mainButton');
+    startMainAction();
     haptics.notify('success');
     await new Promise((resolve) => window.setTimeout(resolve, 700));
-    setMainActionLoading(false);
-  }, [haptics]);
+    finishMainAction();
+  }, [finishMainAction, haptics, startMainAction]);
 
   useTelegramMainButton({
     text: mainActionLoading ? t('mainButton.loading') : t('mainButton.text'),
@@ -85,6 +78,11 @@ export function PlatformScreen() {
         version: launchParams.tgWebAppVersion,
         locale,
         appearance: isDark ? 'dark' : 'light',
+        stateLibrary: 'zustand',
+        notice: noticeId === 'idle' ? t('messages.idleState') : t(`messages.${noticeId}`),
+        skeletonVisible: showSkeleton,
+        mainActionLoading,
+        allowVerticalSwipeRequested: allowVerticalSwipe,
         mainButtonMounted,
         mainButtonVisible,
         mainButtonText,
@@ -101,17 +99,22 @@ export function PlatformScreen() {
       launchParams.tgWebAppPlatform,
       launchParams.tgWebAppVersion,
       locale,
+      allowVerticalSwipe,
+      mainActionLoading,
       mainButtonMounted,
       mainButtonText,
       mainButtonVisible,
+      noticeId,
+      showSkeleton,
+      t,
       verticalSwipeEnabled,
       verticalSwipeSupported,
     ],
   );
 
   const showUnsupported = useCallback(() => {
-    setNoticeId('unsupported');
-  }, []);
+    setNotice('unsupported');
+  }, [setNotice]);
 
   return (
     <Page
@@ -134,7 +137,7 @@ export function PlatformScreen() {
               className="platform-screen__button-primary"
               stretched
               onClick={() => {
-                setNoticeId(haptics.impact('medium') ? 'impact' : 'unsupported');
+                setNotice(haptics.impact('medium') ? 'impact' : 'unsupported');
               }}
             >
               {t('actions.impactHaptic')}
@@ -143,7 +146,7 @@ export function PlatformScreen() {
               stretched
               mode="outline"
               onClick={() => {
-                setNoticeId(haptics.notify('success') ? 'success' : 'unsupported');
+                setNotice(haptics.notify('success') ? 'success' : 'unsupported');
               }}
             >
               {t('actions.successHaptic')}
@@ -152,7 +155,7 @@ export function PlatformScreen() {
               stretched
               mode="outline"
               onClick={() => {
-                setNoticeId(haptics.select() ? 'selection' : 'unsupported');
+                setNotice(haptics.select() ? 'selection' : 'unsupported');
               }}
             >
               {t('actions.selectionHaptic')}
@@ -161,8 +164,7 @@ export function PlatformScreen() {
               stretched
               mode="gray"
               onClick={() => {
-                setShowSkeleton(true);
-                setNoticeId('skeleton');
+                showSkeletonPreview();
               }}
             >
               {t('actions.showSkeleton')}
@@ -176,11 +178,9 @@ export function PlatformScreen() {
                   return;
                 }
 
-                setAllowVerticalSwipe((current) => {
-                  const next = !current;
-                  setNoticeId(next ? 'verticalSwipeEnabled' : 'verticalSwipeDisabled');
-                  return next;
-                });
+                const next = !allowVerticalSwipe;
+                toggleAllowVerticalSwipe();
+                setNotice(next ? 'verticalSwipeEnabled' : 'verticalSwipeDisabled');
               }}
             >
               {allowVerticalSwipe

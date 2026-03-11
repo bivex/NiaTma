@@ -210,6 +210,7 @@
     },
     "messages": {
       "idle": "",
+      "idleState": "Store инициализирован и ждёт взаимодействия.",
       "mainButton": "Обработчик Telegram Main Button успешно сработал.",
       "impact": "Impact haptic был вызван.",
       "success": "Success haptic был вызван.",
@@ -223,6 +224,10 @@
       "runtime": {
         "header": "Runtime",
         "footer": "Здесь централизованы app config и Telegram launch parameters, чтобы управление окружением было явным."
+      },
+      "state": {
+        "header": "State baseline",
+        "footer": "Этот раздел управляется feature-local Zustand store и показывает рекомендуемый client-state pattern для app UI orchestration."
       },
       "telegramUx": {
         "header": "Telegram UX",
@@ -240,6 +245,11 @@
       "version": "Версия Mini Apps",
       "locale": "Локаль",
       "appearance": "Тема",
+      "stateLibrary": "State library",
+      "notice": "Store notice",
+      "skeletonVisible": "Skeleton visible",
+      "mainActionLoading": "Main action loading",
+      "allowVerticalSwipeRequested": "Запрошенное состояние vertical swipe",
       "mainButtonMounted": "Main Button mounted",
       "mainButtonVisible": "Main Button visible",
       "mainButtonText": "Текст Main Button",

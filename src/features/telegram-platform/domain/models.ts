@@ -1,6 +1,17 @@
 import type { DisplayDataValue } from '@/shared/domain/display-data';
 
-export type PlatformSectionId = 'runtime' | 'telegramUx' | 'links';
+export type PlatformSectionId = 'runtime' | 'state' | 'telegramUx' | 'links';
+
+export type PlatformNoticeId =
+  | 'idle'
+  | 'mainButton'
+  | 'impact'
+  | 'success'
+  | 'selection'
+  | 'skeleton'
+  | 'verticalSwipeEnabled'
+  | 'verticalSwipeDisabled'
+  | 'unsupported';
 
 export type PlatformFieldId =
   | 'appName'
@@ -9,6 +20,11 @@ export type PlatformFieldId =
   | 'version'
   | 'locale'
   | 'appearance'
+  | 'stateLibrary'
+  | 'notice'
+  | 'skeletonVisible'
+  | 'mainActionLoading'
+  | 'allowVerticalSwipeRequested'
   | 'mainButtonMounted'
   | 'mainButtonVisible'
   | 'mainButtonText'
@@ -40,6 +56,11 @@ export interface PlatformSnapshot {
   version: string;
   locale: string;
   appearance: string;
+  stateLibrary: string;
+  notice: string;
+  skeletonVisible: boolean;
+  mainActionLoading: boolean;
+  allowVerticalSwipeRequested: boolean;
   mainButtonMounted: boolean;
   mainButtonVisible: boolean;
   mainButtonText?: string;

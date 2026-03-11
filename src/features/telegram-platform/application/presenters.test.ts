@@ -11,6 +11,11 @@ describe('telegram-platform presenters', () => {
       version: '8.4',
       locale: 'ru',
       appearance: 'dark',
+      stateLibrary: 'zustand',
+      notice: 'Action completed',
+      skeletonVisible: false,
+      mainActionLoading: true,
+      allowVerticalSwipeRequested: true,
       mainButtonMounted: true,
       mainButtonVisible: true,
       mainButtonText: 'Run action',
@@ -22,11 +27,15 @@ describe('telegram-platform presenters', () => {
       tonConnectHref: '/ton-connect',
     });
 
-    expect(screen.sections[1]?.rows[2]).toEqual({
+    expect(screen.sections[1]?.rows[0]).toEqual({
+      field: 'stateLibrary',
+      value: { kind: 'text', text: 'zustand' },
+    });
+    expect(screen.sections[2]?.rows[2]).toEqual({
       field: 'mainButtonText',
       value: { kind: 'text', text: 'Run action' },
     });
-    expect(screen.sections[2]?.rows[0]).toEqual({
+    expect(screen.sections[3]?.rows[0]).toEqual({
       field: 'applicationDiagnostics',
       value: { kind: 'link', href: '/application' },
     });
