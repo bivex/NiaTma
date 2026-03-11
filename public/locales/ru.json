@@ -19,6 +19,10 @@
         "title": "Auth Foundation",
         "subtitle": "Telegram initData verification, signed session cookie и local preview login"
       },
+      "profile": {
+        "title": "Protected Profile",
+        "subtitle": "Auth-required user profile route и session-backed profile API"
+      },
       "platform": {
         "title": "Telegram Platform",
         "subtitle": "Main Button, haptics, swipe navigation, skeleton loading и app config"
@@ -328,6 +332,48 @@
       "sessionIssuedAt": "Создана",
       "sessionExpiresAt": "Истекает",
       "initData": "Экран init data",
+      "platform": "Platform baseline",
+      "profile": "Protected profile"
+    }
+  },
+  "profile": {
+    "intro": {
+      "header": "Protected user profile",
+      "description": "Этот route защищён на сервере: anonymous users перенаправляются на /auth, а authenticated users читают нормализованный профиль через защищённый API route."
+    },
+    "actions": {
+      "refresh": "Обновить профиль"
+    },
+    "messages": {
+      "loadError": "Не удалось загрузить профиль пользователя. Обновите session или войдите снова."
+    },
+    "status": {
+      "loading": "loading"
+    },
+    "sections": {
+      "identity": {
+        "header": "Identity",
+        "footer": "Эти значения нормализованы из authenticated session и безопасны для UI display."
+      },
+      "session": {
+        "header": "Session",
+        "footer": "Session timestamps приходят из signed cookie payload, управляемого auth server layer."
+      },
+      "links": {
+        "header": "Связанные экраны",
+        "footer": "Используйте auth screen, чтобы обновлять session, и platform screen, чтобы смотреть client/runtime capabilities."
+      }
+    },
+    "fields": {
+      "subject": "Subject",
+      "provider": "Provider",
+      "userId": "User ID",
+      "displayName": "Отображаемое имя",
+      "username": "Username",
+      "languageCode": "Код языка",
+      "issuedAt": "Создана",
+      "expiresAt": "Истекает",
+      "auth": "Auth foundation",
       "platform": "Platform baseline"
     }
   }

@@ -1,6 +1,7 @@
-import type { AuthSessionStatus } from '../domain/models';
+import type { AuthSessionStatus, AuthUserProfile } from '../domain/models';
 
 export const authSessionQueryKey = ['auth', 'session'] as const;
+export const authProfileQueryKey = ['auth', 'profile'] as const;
 
 async function requestAuth<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   const response = await fetch(input, {
@@ -25,6 +26,10 @@ async function requestAuth<T>(input: RequestInfo, init?: RequestInit): Promise<T
 
 export function fetchAuthSession() {
   return requestAuth<AuthSessionStatus>('/api/auth/session');
+}
+
+export function fetchAuthProfile() {
+  return requestAuth<AuthUserProfile>('/api/auth/profile');
 }
 
 export function signInWithTelegram(initData: string) {

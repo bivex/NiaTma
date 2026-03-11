@@ -19,6 +19,10 @@
         "title": "Auth Foundation",
         "subtitle": "Telegram initData verification, signed session cookie and local preview login"
       },
+      "profile": {
+        "title": "Protected Profile",
+        "subtitle": "Auth-required user profile route and session-backed profile API"
+      },
       "platform": {
         "title": "Telegram Platform",
         "subtitle": "Main Button, haptics, swipe navigation, skeleton loading and app config"
@@ -328,6 +332,48 @@
       "sessionIssuedAt": "Issued at",
       "sessionExpiresAt": "Expires at",
       "initData": "Init data screen",
+      "platform": "Platform baseline",
+      "profile": "Protected profile"
+    }
+  },
+  "profile": {
+    "intro": {
+      "header": "Protected user profile",
+      "description": "This route is server-protected: anonymous users are redirected to /auth, while authenticated users can read their normalized profile via a protected API route."
+    },
+    "actions": {
+      "refresh": "Refresh profile"
+    },
+    "messages": {
+      "loadError": "Unable to load the authenticated profile. Refresh the session or sign in again."
+    },
+    "status": {
+      "loading": "loading"
+    },
+    "sections": {
+      "identity": {
+        "header": "Identity",
+        "footer": "These values are normalized from the authenticated session and safe to use for UI display."
+      },
+      "session": {
+        "header": "Session",
+        "footer": "Session timestamps come from the signed cookie payload managed by the auth server layer."
+      },
+      "links": {
+        "header": "Related screens",
+        "footer": "Use the auth screen to refresh the session and the platform screen to inspect client/runtime capabilities."
+      }
+    },
+    "fields": {
+      "subject": "Subject",
+      "provider": "Provider",
+      "userId": "User ID",
+      "displayName": "Display name",
+      "username": "Username",
+      "languageCode": "Language code",
+      "issuedAt": "Issued at",
+      "expiresAt": "Expires at",
+      "auth": "Auth foundation",
       "platform": "Platform baseline"
     }
   }

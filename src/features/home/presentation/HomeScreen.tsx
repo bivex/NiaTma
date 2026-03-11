@@ -55,6 +55,14 @@ export function HomeScreen() {
               </div>
             </Cell>
           </AppLink>
+          <AppLink href={routePaths.profile}>
+            <Cell>
+              <div className="home-screen__cell-copy">
+                <span className="home-screen__cell-title">{t('features.profile.title')}</span>
+                <span className="home-screen__cell-subtitle">{t('features.profile.subtitle')}</span>
+              </div>
+            </Cell>
+          </AppLink>
           <AppLink href={routePaths.platform}>
             <Cell>
               <div className="home-screen__cell-copy">

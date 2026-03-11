@@ -1,0 +1,21 @@
+.profile-screen__copy {
+  padding: 16px 24px 8px;
+}
+
+.profile-screen__title,
+.profile-screen__description,
+.profile-screen__notice {
+  color: var(--tg-theme-text-color, #11181c);
+}
+
+.profile-screen__description,
+.profile-screen__notice {
+  margin-top: 4px;
+  opacity: 0.92;
+}
+
+.profile-screen__actions {
+  display: grid;
+  gap: 8px;
+  padding: 0 16px 16px;
+}

@@ -30,8 +30,8 @@ export function createAuthenticatedAuthStatus(
   };
 }
 
-export async function readAuthSessionStatus(config: AuthConfig): Promise<{
-  status: AuthSessionStatus;
+async function readCurrentAuthSession(config: AuthConfig): Promise<{
+  session?: AuthSession;
   shouldClearCookie: boolean;
 }> {
   const cookieStore = await cookies();
@@ -39,7 +39,7 @@ export async function readAuthSessionStatus(config: AuthConfig): Promise<{
 
   if (!token || !config.sessionSecret) {
     return {
-      status: createAnonymousAuthStatus(config),
+      session: undefined,
       shouldClearCookie: Boolean(token && !config.sessionSecret),
     };
   }
@@ -48,13 +48,39 @@ export async function readAuthSessionStatus(config: AuthConfig): Promise<{
 
   if (!session.valid) {
     return {
-      status: createAnonymousAuthStatus(config),
+      session: undefined,
       shouldClearCookie: true,
     };
   }
 
   return {
-    status: createAuthenticatedAuthStatus(config, session.session),
+    session: session.session,
     shouldClearCookie: false,
+  };
+}
+
+export async function readAuthenticatedAuthSession(config: AuthConfig): Promise<{
+  session?: AuthSession;
+  shouldClearCookie: boolean;
+}> {
+  return readCurrentAuthSession(config);
+}
+
+export async function readAuthSessionStatus(config: AuthConfig): Promise<{
+  status: AuthSessionStatus;
+  shouldClearCookie: boolean;
+}> {
+  const current = await readCurrentAuthSession(config);
+
+  if (!current.session) {
+    return {
+      status: createAnonymousAuthStatus(config),
+      shouldClearCookie: current.shouldClearCookie,
+    };
+  }
+
+  return {
+    status: createAuthenticatedAuthStatus(config, current.session),
+    shouldClearCookie: current.shouldClearCookie,
   };
 }

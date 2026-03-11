@@ -18,6 +18,7 @@ describe('auth presenters', () => {
       sessionExpiresAt: '12:00:00',
       initDataHref: '/init-data',
       platformHref: '/platform',
+      profileHref: '/profile',
     });
 
     expect(screen.sections[0]?.rows[1]).toEqual({
@@ -31,6 +32,10 @@ describe('auth presenters', () => {
     expect(screen.sections[2]?.rows[0]).toEqual({
       field: 'initData',
       value: { kind: 'link', href: '/init-data' },
+    });
+    expect(screen.sections[2]?.rows[2]).toEqual({
+      field: 'profile',
+      value: { kind: 'link', href: '/profile' },
     });
   });
 });

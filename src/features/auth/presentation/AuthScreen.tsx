@@ -99,6 +99,7 @@ export function AuthScreen() {
         sessionExpiresAt: session ? timeFormatter.format(session.expiresAt) : undefined,
         initDataHref: routePaths.initData,
         platformHref: routePaths.platform,
+        profileHref: routePaths.profile,
       }),
     [
       displayName,

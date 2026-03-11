@@ -35,6 +35,7 @@ export function buildAuthScreenModel(snapshot: AuthScreenSnapshot): AuthScreenMo
         rows: [
           { field: 'initData', value: { kind: 'link', href: snapshot.initDataHref } },
           { field: 'platform', value: { kind: 'link', href: snapshot.platformHref } },
+          { field: 'profile', value: { kind: 'link', href: snapshot.profileHref } },
         ],
       },
     ],

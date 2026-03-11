@@ -45,7 +45,8 @@ export type AuthFieldId =
   | 'sessionIssuedAt'
   | 'sessionExpiresAt'
   | 'initData'
-  | 'platform';
+  | 'platform'
+  | 'profile';
 
 export interface AuthRow {
   field: AuthFieldId;
@@ -74,5 +75,58 @@ export interface AuthScreenSnapshot {
   sessionIssuedAt?: string;
   sessionExpiresAt?: string;
   initDataHref: string;
+  platformHref: string;
+  profileHref: string;
+}
+
+export interface AuthUserProfile {
+  subject: string;
+  provider: AuthProvider;
+  userId: string;
+  displayName?: string;
+  username?: string;
+  languageCode?: string;
+  issuedAt: number;
+  expiresAt: number;
+}
+
+export type ProfileSectionId = 'identity' | 'session' | 'links';
+
+export type ProfileFieldId =
+  | 'subject'
+  | 'provider'
+  | 'userId'
+  | 'displayName'
+  | 'username'
+  | 'languageCode'
+  | 'issuedAt'
+  | 'expiresAt'
+  | 'auth'
+  | 'platform';
+
+export interface ProfileRow {
+  field: ProfileFieldId;
+  value: DisplayDataValue;
+}
+
+export interface ProfileSection {
+  id: ProfileSectionId;
+  rows: ProfileRow[];
+}
+
+export interface ProfileScreenModel {
+  sections: ProfileSection[];
+}
+
+export interface ProfileScreenSnapshot {
+  subject: string;
+  provider: string;
+  userId: string;
+  displayName?: string;
+  username?: string;
+  languageCode?: string;
+  issuedAt: string;
+  expiresAt: string;
+  authHref: string;
   platformHref: string;
 }

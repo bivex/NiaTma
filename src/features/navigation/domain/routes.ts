@@ -5,6 +5,7 @@ export const routePaths = {
   initData: '/init-data',
   launchParams: '/launch-params',
   platform: '/platform',
+  profile: '/profile',
   themeParams: '/theme-params',
   tonConnect: '/ton-connect',
 } as const;
