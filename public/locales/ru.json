@@ -1,6 +1,88 @@
 {
-  "i18n": {
-    "header": "Поддержка i18n",
-    "footer": "Вы можете выбрать другой язык в выпадающем меню."
+  "shared": {
+    "displayData": {
+      "open": "Открыть",
+      "empty": "пусто"
+    }
+  },
+  "home": {
+    "features": {
+      "header": "Возможности",
+      "footer": "На этих страницах можно посмотреть возможности Telegram Mini Apps и связанных интеграций",
+      "tonConnect": {
+        "title": "TON Connect",
+        "subtitle": "Подключите ваш TON-кошелёк",
+        "imageAlt": "Логотип TON"
+      }
+    },
+    "launchData": {
+      "header": "Данные запуска приложения",
+      "footer": "Эти страницы помогают изучить текущие параметры и данные запуска приложения",
+      "initData": {
+        "title": "Init Data",
+        "subtitle": "Данные пользователя, чата и технические данные"
+      },
+      "launchParams": {
+        "title": "Параметры запуска",
+        "subtitle": "Идентификатор платформы, версия Mini Apps и т.д."
+      },
+      "themeParams": {
+        "title": "Параметры темы",
+        "subtitle": "Информация о цветовой палитре Telegram"
+      }
+    },
+    "locale": {
+      "header": "Поддержка i18n",
+      "footer": "Вы можете выбрать другой язык в выпадающем меню."
+    }
+  },
+  "launchData": {
+    "initData": {
+      "missing": {
+        "header": "Упс",
+        "description": "Приложение было запущено без init data",
+        "imageAlt": "Стикер Telegram"
+      },
+      "sections": {
+        "initData": "Init Data",
+        "user": "Пользователь",
+        "receiver": "Получатель",
+        "chat": "Чат"
+      }
+    },
+    "themeParams": {
+      "empty": {
+        "title": "Параметры темы недоступны",
+        "description": "В текущем окружении параметры темы недоступны"
+      }
+    }
+  },
+  "tonConnect": {
+    "disconnected": {
+      "header": "TON Connect",
+      "description": "Чтобы показать данные TON Connect, нужно подключить кошелёк"
+    },
+    "provider": {
+      "aboutWallet": "О кошельке",
+      "logoAlt": "Логотип провайдера"
+    },
+    "account": {
+      "header": "Аккаунт",
+      "fields": {
+        "address": "Адрес",
+        "chain": "Сеть",
+        "publicKey": "Публичный ключ"
+      }
+    },
+    "device": {
+      "header": "Устройство",
+      "fields": {
+        "appName": "Название приложения",
+        "appVersion": "Версия приложения",
+        "maxProtocolVersion": "Макс. версия протокола",
+        "platform": "Платформа",
+        "features": "Возможности"
+      }
+    }
   }
 }

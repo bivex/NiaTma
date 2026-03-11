@@ -1,6 +1,5 @@
 'use client';
 
-import { openLink } from '@tma.js/sdk-react';
 import { useTonWallet } from '@tonconnect/ui-react';
 
 import type { TonWalletSnapshot } from '../domain/models';
@@ -34,8 +33,4 @@ export function useTonWalletSnapshot(): TonWalletSnapshot | null {
       ),
     },
   };
-}
-
-export function openExternalTonLink(url: string) {
-  openLink(url);
 }

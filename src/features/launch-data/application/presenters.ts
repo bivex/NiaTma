@@ -1,6 +1,8 @@
 import type { DisplayDataRow } from '@/shared/domain/display-data';
+import { routePaths } from '@/features/navigation/domain/routes';
 
 import type {
+  DisplaySection,
   InitDataScreenModel,
   InitDataSnapshot,
   LaunchParamsSnapshot,
@@ -61,16 +63,16 @@ export function buildInitDataScreenModel(
     }, []),
   ];
 
-  const sections = [{ header: 'Init Data', rows: rootRows }];
+  const sections: DisplaySection[] = [{ id: 'initData', rows: rootRows }];
 
   if (snapshot.user) {
-    sections.push({ header: 'User', rows: mapRecordRows(snapshot.user) });
+    sections.push({ id: 'user', rows: mapRecordRows(snapshot.user) });
   }
   if (snapshot.receiver) {
-    sections.push({ header: 'Receiver', rows: mapRecordRows(snapshot.receiver) });
+    sections.push({ id: 'receiver', rows: mapRecordRows(snapshot.receiver) });
   }
   if (snapshot.chat) {
-    sections.push({ header: 'Chat', rows: mapRecordRows(snapshot.chat) });
+    sections.push({ id: 'chat', rows: mapRecordRows(snapshot.chat) });
   }
 
   return { status: 'ready', sections };
@@ -85,10 +87,10 @@ export function buildLaunchParamsRows(
     mapPrimitiveRow('tgWebAppVersion', snapshot.version),
     mapPrimitiveRow('tgWebAppBotInline', snapshot.botInline),
     mapPrimitiveRow('tgWebAppStartParam', snapshot.startParam),
-    { title: 'tgWebAppData', value: { kind: 'link', href: '/init-data', label: 'Open' } },
+    { title: 'tgWebAppData', value: { kind: 'link', href: routePaths.initData } },
     {
       title: 'tgWebAppThemeParams',
-      value: { kind: 'link', href: '/theme-params', label: 'Open' },
+      value: { kind: 'link', href: routePaths.themeParams },
     },
   ];
 }

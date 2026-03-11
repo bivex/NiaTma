@@ -1,4 +1,17 @@
-import type { DisplayDataRow } from '@/shared/domain/display-data';
+import type { DisplayDataValue } from '@/shared/domain/display-data';
+
+export type TonConnectAccountField = 'address' | 'chain' | 'publicKey';
+export type TonConnectDeviceField =
+  | 'appName'
+  | 'appVersion'
+  | 'maxProtocolVersion'
+  | 'platform'
+  | 'features';
+
+export interface TonConnectFieldRow<Field extends string> {
+  field: Field;
+  value: DisplayDataValue;
+}
 
 export interface TonWalletSnapshot {
   provider?: {
@@ -26,6 +39,6 @@ export type TonConnectScreenModel =
   | {
       status: 'connected';
       provider?: TonWalletSnapshot['provider'];
-      accountRows: DisplayDataRow[];
-      deviceRows: DisplayDataRow[];
+      accountRows: TonConnectFieldRow<TonConnectAccountField>[];
+      deviceRows: TonConnectFieldRow<TonConnectDeviceField>[];
     };

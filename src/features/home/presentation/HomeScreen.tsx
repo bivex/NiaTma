@@ -4,57 +4,58 @@ import { Cell, Image, List, Section } from '@telegram-apps/telegram-ui';
 import { useTranslations } from 'next-intl';
 
 import { LocaleSwitcher } from '@/features/i18n/presentation/LocaleSwitcher';
-import { Page } from '@/shared/ui/Page';
-import { Link } from '@/shared/ui/Link/Link';
+import { routePaths } from '@/features/navigation/domain/routes';
+import { AppLink } from '@/features/navigation/presentation/AppLink';
+import { Page } from '@/features/navigation/presentation/Page';
 
 import tonSvg from '@/app/_assets/ton.svg';
 
 export function HomeScreen() {
-  const t = useTranslations('i18n');
+  const t = useTranslations('home');
 
   return (
     <Page back={false}>
       <List>
         <Section
-          header="Features"
-          footer="You can use these pages to learn more about features, provided by Telegram Mini Apps and other useful projects"
+          header={t('features.header')}
+          footer={t('features.footer')}
         >
-          <Link href="/ton-connect">
+          <AppLink href={routePaths.tonConnect}>
             <Cell
               before={
                 <Image
                   src={tonSvg.src}
                   style={{ backgroundColor: '#007AFF' }}
-                  alt="TON Logo"
+                  alt={t('features.tonConnect.imageAlt')}
                 />
               }
-              subtitle="Connect your TON wallet"
+              subtitle={t('features.tonConnect.subtitle')}
             >
-              TON Connect
+              {t('features.tonConnect.title')}
             </Cell>
-          </Link>
+          </AppLink>
         </Section>
         <Section
-          header="Application Launch Data"
-          footer="These pages help developer to learn more about current launch information"
+          header={t('launchData.header')}
+          footer={t('launchData.footer')}
         >
-          <Link href="/init-data">
-            <Cell subtitle="User data, chat information, technical data">
-              Init Data
+          <AppLink href={routePaths.initData}>
+            <Cell subtitle={t('launchData.initData.subtitle')}>
+              {t('launchData.initData.title')}
             </Cell>
-          </Link>
-          <Link href="/launch-params">
-            <Cell subtitle="Platform identifier, Mini Apps version, etc.">
-              Launch Parameters
+          </AppLink>
+          <AppLink href={routePaths.launchParams}>
+            <Cell subtitle={t('launchData.launchParams.subtitle')}>
+              {t('launchData.launchParams.title')}
             </Cell>
-          </Link>
-          <Link href="/theme-params">
-            <Cell subtitle="Telegram application palette information">
-              Theme Parameters
+          </AppLink>
+          <AppLink href={routePaths.themeParams}>
+            <Cell subtitle={t('launchData.themeParams.subtitle')}>
+              {t('launchData.themeParams.title')}
             </Cell>
-          </Link>
+          </AppLink>
         </Section>
-        <Section header={t('header')} footer={t('footer')}>
+        <Section header={t('locale.header')} footer={t('locale.footer')}>
           <LocaleSwitcher />
         </Section>
       </List>

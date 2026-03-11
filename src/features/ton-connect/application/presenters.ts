@@ -1,9 +1,16 @@
-import type { DisplayDataRow } from '@/shared/domain/display-data';
+import type {
+  TonConnectAccountField,
+  TonConnectDeviceField,
+  TonConnectFieldRow,
+  TonConnectScreenModel,
+  TonWalletSnapshot,
+} from '../domain/models';
 
-import type { TonConnectScreenModel, TonWalletSnapshot } from '../domain/models';
-
-function textRow(title: string, text?: string): DisplayDataRow {
-  return { title, value: { kind: 'text', text } };
+function textRow<Field extends string>(
+  field: Field,
+  text?: string,
+): TonConnectFieldRow<Field> {
+  return { field, value: { kind: 'text', text } };
 }
 
 export function buildTonConnectScreenModel(
@@ -17,16 +24,16 @@ export function buildTonConnectScreenModel(
     status: 'connected',
     provider: wallet.provider,
     accountRows: [
-      textRow('Address', wallet.account.address),
-      textRow('Chain', wallet.account.chain),
-      textRow('Public Key', wallet.account.publicKey),
+      textRow<TonConnectAccountField>('address', wallet.account.address),
+      textRow<TonConnectAccountField>('chain', wallet.account.chain),
+      textRow<TonConnectAccountField>('publicKey', wallet.account.publicKey),
     ],
     deviceRows: [
-      textRow('App Name', wallet.device.appName),
-      textRow('App Version', wallet.device.appVersion),
-      textRow('Max Protocol Version', wallet.device.maxProtocolVersion),
-      textRow('Platform', wallet.device.platform),
-      textRow('Features', wallet.device.features.join(', ')),
+      textRow<TonConnectDeviceField>('appName', wallet.device.appName),
+      textRow<TonConnectDeviceField>('appVersion', wallet.device.appVersion),
+      textRow<TonConnectDeviceField>('maxProtocolVersion', wallet.device.maxProtocolVersion),
+      textRow<TonConnectDeviceField>('platform', wallet.device.platform),
+      textRow<TonConnectDeviceField>('features', wallet.device.features.join(', ')),
     ],
   };
 }

@@ -18,11 +18,11 @@ describe('launch-data presenters', () => {
 
     expect(rows[5]).toEqual({
       title: 'tgWebAppData',
-      value: { kind: 'link', href: '/init-data', label: 'Open' },
+      value: { kind: 'link', href: '/init-data' },
     });
     expect(rows[6]).toEqual({
       title: 'tgWebAppThemeParams',
-      value: { kind: 'link', href: '/theme-params', label: 'Open' },
+      value: { kind: 'link', href: '/theme-params' },
     });
   });
 
@@ -52,8 +52,8 @@ describe('launch-data presenters', () => {
     expect(screen.status).toBe('ready');
     if (screen.status === 'ready') {
       expect(screen.sections).toHaveLength(2);
-      expect(screen.sections[0]?.header).toBe('Init Data');
-      expect(screen.sections[1]?.header).toBe('User');
+      expect(screen.sections[0]?.id).toBe('initData');
+      expect(screen.sections[1]?.id).toBe('user');
     }
   });
 });

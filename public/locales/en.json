@@ -1,6 +1,88 @@
 {
-  "i18n": {
-    "header": "Application supports i18n",
-    "footer": "You can select a different language from the dropdown menu."
+  "shared": {
+    "displayData": {
+      "open": "Open",
+      "empty": "empty"
+    }
+  },
+  "home": {
+    "features": {
+      "header": "Features",
+      "footer": "You can use these pages to learn more about features, provided by Telegram Mini Apps and other useful projects",
+      "tonConnect": {
+        "title": "TON Connect",
+        "subtitle": "Connect your TON wallet",
+        "imageAlt": "TON Logo"
+      }
+    },
+    "launchData": {
+      "header": "Application Launch Data",
+      "footer": "These pages help developer to learn more about current launch information",
+      "initData": {
+        "title": "Init Data",
+        "subtitle": "User data, chat information, technical data"
+      },
+      "launchParams": {
+        "title": "Launch Parameters",
+        "subtitle": "Platform identifier, Mini Apps version, etc."
+      },
+      "themeParams": {
+        "title": "Theme Parameters",
+        "subtitle": "Telegram application palette information"
+      }
+    },
+    "locale": {
+      "header": "Application supports i18n",
+      "footer": "You can select a different language from the dropdown menu."
+    }
+  },
+  "launchData": {
+    "initData": {
+      "missing": {
+        "header": "Oops",
+        "description": "Application was launched with missing init data",
+        "imageAlt": "Telegram sticker"
+      },
+      "sections": {
+        "initData": "Init Data",
+        "user": "User",
+        "receiver": "Receiver",
+        "chat": "Chat"
+      }
+    },
+    "themeParams": {
+      "empty": {
+        "title": "No theme parameters available",
+        "description": "Theme parameters are not available in the current environment"
+      }
+    }
+  },
+  "tonConnect": {
+    "disconnected": {
+      "header": "TON Connect",
+      "description": "To display the data related to the TON Connect, it is required to connect your wallet"
+    },
+    "provider": {
+      "aboutWallet": "About wallet",
+      "logoAlt": "Provider logo"
+    },
+    "account": {
+      "header": "Account",
+      "fields": {
+        "address": "Address",
+        "chain": "Chain",
+        "publicKey": "Public Key"
+      }
+    },
+    "device": {
+      "header": "Device",
+      "fields": {
+        "appName": "App Name",
+        "appVersion": "App Version",
+        "maxProtocolVersion": "Max Protocol Version",
+        "platform": "Platform",
+        "features": "Features"
+      }
+    }
   }
 }

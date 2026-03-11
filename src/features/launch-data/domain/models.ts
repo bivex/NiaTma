@@ -1,7 +1,9 @@
 import type { DisplayDataRow } from '@/shared/domain/display-data';
 
+export type InitDataSectionId = 'initData' | 'user' | 'receiver' | 'chat';
+
 export interface DisplaySection {
-  header: string;
+  id: InitDataSectionId;
   rows: DisplayDataRow[];
 }
 

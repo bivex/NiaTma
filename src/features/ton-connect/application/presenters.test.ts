@@ -32,7 +32,7 @@ describe('ton-connect presenters', () => {
     expect(screen.status).toBe('connected');
     if (screen.status === 'connected') {
       expect(screen.deviceRows[4]).toEqual({
-        title: 'Features',
+        field: 'features',
         value: { kind: 'text', text: 'sendTransaction, signData' },
       });
     }

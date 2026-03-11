@@ -11,14 +11,14 @@ import {
   Text,
   Title,
 } from '@telegram-apps/telegram-ui';
+import { useTranslations } from 'next-intl';
 
 import { buildTonConnectScreenModel } from '@/features/ton-connect/application/presenters';
-import {
-  openExternalTonLink,
-  useTonWalletSnapshot,
-} from '@/features/ton-connect/infrastructure/telegram';
+import { openExternalLink } from '@/features/navigation/infrastructure/telegram';
+import { Page } from '@/features/navigation/presentation/Page';
+import { useTonWalletSnapshot } from '@/features/ton-connect/infrastructure/telegram';
 import { bem } from '@/shared/lib/bem';
-import { Page } from '@/shared/ui/Page';
+import type { DisplayDataRow } from '@/shared/domain/display-data';
 import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
 
 import './TonConnectScreen.css';
@@ -28,19 +28,33 @@ const [, e] = bem('ton-connect-page');
 export function TonConnectScreen() {
   const wallet = useTonWalletSnapshot();
   const screen = buildTonConnectScreenModel(wallet);
+  const t = useTranslations('tonConnect');
+
+  const accountRows: DisplayDataRow[] =
+    screen.status === 'connected'
+      ? screen.accountRows.map((row) => ({
+          title: t(`account.fields.${row.field}`),
+          value: row.value,
+        }))
+      : [];
+
+  const deviceRows: DisplayDataRow[] =
+    screen.status === 'connected'
+      ? screen.deviceRows.map((row) => ({
+          title: t(`device.fields.${row.field}`),
+          value: row.value,
+        }))
+      : [];
 
   if (screen.status === 'disconnected') {
     return (
       <Page>
         <Placeholder
           className={e('placeholder')}
-          header="TON Connect"
+          header={t('disconnected.header')}
           description={
             <>
-              <Text>
-                To display the data related to the TON Connect, it is required
-                to connect your wallet
-              </Text>
+              <Text>{t('disconnected.description')}</Text>
               <TonConnectButton className={e('button')} />
             </>
           }
@@ -59,17 +73,17 @@ export function TonConnectScreen() {
                 before={
                   <Avatar
                     src={screen.provider.imageUrl}
-                    alt="Provider logo"
+                    alt={t('provider.logoAlt')}
                     width={60}
                     height={60}
                   />
                 }
-                after={<Navigation>About wallet</Navigation>}
+                after={<Navigation>{t('provider.aboutWallet')}</Navigation>}
                 subtitle={screen.provider.appName}
                 onClick={(event) => {
                   event.preventDefault();
                   if (screen.provider?.aboutUrl) {
-                    openExternalTonLink(screen.provider.aboutUrl);
+                    openExternalLink(screen.provider.aboutUrl);
                   }
                 }}
               >
@@ -79,8 +93,8 @@ export function TonConnectScreen() {
             <TonConnectButton className={e('button-connected')} />
           </>
         )}
-        <DisplayData header="Account" rows={screen.accountRows} />
-        <DisplayData header="Device" rows={screen.deviceRows} />
+        <DisplayData header={t('account.header')} rows={accountRows} />
+        <DisplayData header={t('device.header')} rows={deviceRows} />
       </List>
     </Page>
   );

@@ -4,7 +4,7 @@ import { List } from '@telegram-apps/telegram-ui';
 
 import { buildLaunchParamsRows } from '@/features/launch-data/application/presenters';
 import { useLaunchParamsSnapshot } from '@/features/launch-data/infrastructure/telegram';
-import { Page } from '@/shared/ui/Page';
+import { Page } from '@/features/navigation/presentation/Page';
 import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
 
 export function LaunchParamsScreen() {
