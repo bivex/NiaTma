@@ -1,141 +1,185 @@
-# Telegram Mini Apps Next.js Template
+# NiaTma
 
-This template demonstrates how developers can implement a web application on the
-Telegram Mini Apps platform using the following technologies and libraries:
+NiaTma is a Next.js 16 Telegram Mini App playground that now goes well beyond the
+starter template baseline. It includes Telegram platform integration, TON Connect,
+server-backed auth, wallet-first TON authentication via `ton_proof`, and a minimal
+wallet-gated premium route.
 
-- [Next.js](https://nextjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [TON Connect](https://docs.ton.org/develop/dapps/ton-connect/overview)
-- [@telegram-apps SDK](https://docs.telegram-mini-apps.com/packages/telegram-apps-sdk/2-x)
-- [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
+## Stack
 
-> The template was created using [pnpm](https://pnpm.io/). Therefore, it is
-> required to use it for this project as well. Using other package managers, you
-> will receive a corresponding error.
+- Next.js 16 + React 19 + TypeScript
+- Bun for package management and command execution
+- Telegram Mini Apps SDK + Telegram UI
+- TON Connect UI React
+- TanStack Query
+- Zustand
+- next-intl
+- `@ton/ton` + `@ton/crypto` for backend `ton_proof` verification
 
-## Install Dependencies
+## Current feature set
 
-If you have just cloned this template, you should install the project
-dependencies using the command:
+- Telegram Mini App runtime integration with local browser mock support
+- i18n-enabled app shell and route structure
+- Platform demo screen for Main Button, haptics, swipe behavior, and app config
+- Browser application diagnostics screen
+- Server-backed auth foundation:
+  - Telegram `initData` auth
+  - local dev login fallback
+  - signed session cookies
+  - protected profile route/API
+- TON Connect wallet integration:
+  - wallet connect/disconnect
+  - wallet link/unlink to existing auth session
+  - backend `ton_proof` verification
+  - wallet-first authenticated session issuance
+- Monetization foundation:
+  - wallet premium entitlement model
+  - `/premium` wallet-gated route
 
-```Bash
-pnpm install
+## Main routes
+
+- `/` — home
+- `/auth` — auth foundation screen
+- `/profile` — protected authenticated profile
+- `/ton-connect` — wallet connect, wallet link, and wallet-first TON auth
+- `/premium` — wallet-gated premium preview
+- `/platform` — Telegram platform baseline demo
+- `/application` — browser diagnostics
+- `/init-data`, `/launch-params`, `/theme-params` — runtime inspection pages
+
+## Install
+
+Use Bun for this repository.
+
+```bash
+bun install
 ```
 
 ## Scripts
 
-This project contains the following scripts:
+- `bun run dev` — start development server
+- `bun run dev:https` — start development server with self-signed HTTPS
+- `bun run build` — production build
+- `bun run start` — run production server
+- `bun run lint` — run ESLint
+- `bun test` — run tests directly with Bun
 
-- `dev`. Runs the application in development mode.
-- `dev:https`. Runs the application in development mode using self-signed SSL
-  certificate.
-- `build`. Builds the application for production.
-- `start`. Starts the Next.js server in production mode.
-- `lint`. Runs [eslint](https://eslint.org/) to ensure the code quality meets
-  the required
-  standards.
+## Local development
 
-To run a script, use the `pnpm run` command:
-
-```Bash
-pnpm run {script}
-# Example: pnpm run build
-```
-
-## Create Bot and Mini App
-
-Before you start, make sure you have already created a Telegram Bot. Here is
-a [comprehensive guide](https://docs.telegram-mini-apps.com/platform/creating-new-app)
-on how to do it.
-
-## Run
-
-Although Mini Apps are designed to be opened
-within [Telegram applications](https://docs.telegram-mini-apps.com/platform/about#supported-applications),
-you can still develop and test them outside of Telegram during the development
-process.
-
-To run the application in the development mode, use the `dev` script:
+Run the app locally:
 
 ```bash
-pnpm run dev
+bun run dev
 ```
 
-After this, you will see a similar message in your terminal:
+Open `http://localhost:3000`.
+
+The app supports local browser development outside Telegram by mocking the Telegram
+environment for localhost/LAN preview hosts. That keeps normal developer flows fast
+while still allowing real Telegram sessions when launched inside Telegram.
+
+For HTTPS during Mini App setup/testing:
 
 ```bash
-▲ Next.js 14.2.3
-- Local:        http://localhost:3000
-
-✓ Starting...
-✓ Ready in 2.9s
+bun run dev:https
 ```
 
-To view the application, you need to open the `Local`
-link (`http://localhost:3000` in this example) in your browser.
+## Production-like local preview
 
-It is important to note that some libraries in this template, such as
-`@telegram-apps/sdk`, are not intended for use outside of Telegram.
-
-Nevertheless, they appear to function properly. This is because the
-`src/hooks/useTelegramMock.ts` file, which is imported in the application's
-`Root` component, employs the `mockTelegramEnv` function to simulate the
-Telegram environment. This trick convinces the application that it is
-running in a Telegram-based environment. Therefore, be cautious not to use this
-function in production mode unless you fully understand its implications.
-
-### Run Inside Telegram
-
-Although it is possible to run the application outside of Telegram, it is
-recommended to develop it within Telegram for the most accurate representation
-of its real-world functionality.
-
-To run the application inside Telegram, [@BotFather](https://t.me/botfather)
-requires an HTTPS link.
-
-This template already provides a solution.
-
-To retrieve a link with the HTTPS protocol, consider using the `dev:https`
-script:
+To verify the real production build locally:
 
 ```bash
-$ pnpm run dev:https
-
-▲ Next.js 14.2.3
-- Local:        https://localhost:3000
-
-✓ Starting...
-✓ Ready in 2.4s
+bun run build
+bun run start -- --port 3000
 ```
 
-Visiting the `Local` link (`https://localhost:3000` in this example) in your
-browser, you will see the following warning:
+## Environment variables
 
-![SSL Warning](assets/ssl-warning.png)
+### Auth / server
 
-This browser warning is normal and can be safely ignored as long as the site is
-secure. Click the `Proceed to localhost (unsafe)` button to continue and view
-the application.
+- `AUTH_SESSION_SECRET` — secret used to sign auth session cookies
+- `TELEGRAM_BOT_TOKEN` — required for real Telegram `initData` verification
+- `AUTH_ALLOW_DEV_LOGIN` — enable/disable local preview login fallback
+- `AUTH_SESSION_TTL_SECONDS` — session cookie lifetime
+- `AUTH_TELEGRAM_MAX_AGE_SECONDS` — allowed age for Telegram auth payloads
+- `AUTH_TON_PROOF_MAX_AGE_SECONDS` — allowed age for TON proof timestamps
+- `AUTH_TON_PROOF_PAYLOAD_TTL_SECONDS` — TTL for one-time TON proof payloads
 
-Once the application is displayed correctly, submit the
-link `https://127.0.0.1:3000` (`https://localhost:3000` is considered as invalid
-by BotFather) as the Mini App link to [@BotFather](https://t.me/botfather).
-Then, navigate to [https://web.telegram.org/k/](https://web.telegram.org/k/),
-find your bot, and launch the Telegram Mini App. This approach provides the full
-development experience.
+### Client / feature flags
 
-## Deploy
+- `NEXT_PUBLIC_APP_NAME`
+- `NEXT_PUBLIC_ENABLE_APPLICATION_DIAGNOSTICS`
+- `NEXT_PUBLIC_ENABLE_MONETIZATION`
+- `NEXT_PUBLIC_ENABLE_PLATFORM_DEMO`
+- `NEXT_PUBLIC_ENABLE_TELEGRAM_HAPTICS`
+- `NEXT_PUBLIC_ENABLE_TELEGRAM_MAIN_BUTTON`
+- `NEXT_PUBLIC_ENABLE_SWIPE_BACK_NAVIGATION`
+- `NEXT_PUBLIC_ENABLE_VERTICAL_SWIPE_BEHAVIOR`
+- `NEXT_PUBLIC_ENABLE_TON_CONNECT`
 
-The easiest way to deploy your Next.js app is to use
-the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
+## Auth modes
 
-Check out
-the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for
-more details.
+This project currently supports three auth entry paths:
 
-## Useful Links
+1. **Telegram auth** via server-side `initData` verification
+2. **Dev login** for local preview/testing
+3. **Wallet-first TON auth** via backend `ton_proof` verification
 
-- [Platform documentation](https://docs.telegram-mini-apps.com/)
-- [@telegram-apps/sdk-react documentation](https://docs.telegram-mini-apps.com/packages/telegram-apps-sdk-react)
-- [Telegram developers community chat](https://t.me/devs)
+Wallet-first TON auth creates a signed session with provider `ton` and grants the
+demo premium entitlement used by the `/premium` route.
+
+## TON proof notes
+
+The backend verifies `ton_proof` using local parsing of standard wallet contracts
+from `walletStateInit` and checks:
+
+- one-time payload consumption
+- domain binding
+- timestamp freshness
+- derived address match
+- extracted public key match
+- ed25519 signature validity
+
+The current implementation is intentionally local-first and does not yet include an
+external on-chain fallback provider.
+
+## Validation
+
+Useful local verification commands:
+
+```bash
+bun run lint
+bun run build
+bun test
+```
+
+There is also focused end-to-end auth coverage for:
+
+- anonymous access behavior
+- dev login
+- wallet link/unlink
+- backend `ton_proof` verification
+- wallet-gated premium access
+
+## Telegram setup
+
+Before using the Mini App inside Telegram, create a bot with
+[@BotFather](https://t.me/botfather) and configure your Mini App URL.
+
+For local HTTPS testing, use `https://127.0.0.1:3000` rather than `localhost` when
+registering the Mini App URL with BotFather.
+
+## Deployment
+
+Any Next.js-compatible deployment target can be used. Make sure production has at
+least:
+
+- `AUTH_SESSION_SECRET`
+- `TELEGRAM_BOT_TOKEN` if Telegram auth is enabled
+- HTTPS enabled in front of the app
+
+## Useful links
+
+- [Telegram Mini Apps docs](https://docs.telegram-mini-apps.com/)
+- [TON Connect docs](https://docs.ton.org/develop/dapps/ton-connect/overview)
+- [Next.js docs](https://nextjs.org/docs)
