@@ -25,7 +25,7 @@ import './TonConnectScreen.css';
 
 const [, e] = bem('ton-connect-page');
 
-export function TonConnectScreen() {
+function TonConnectScreenContent() {
   const wallet = useTonWalletSnapshot();
   const screen = buildTonConnectScreenModel(wallet);
   const t = useTranslations('tonConnect');
@@ -48,58 +48,62 @@ export function TonConnectScreen() {
 
   if (screen.status === 'disconnected') {
     return (
-      <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
-        <Page>
-          <Placeholder
-            className={e('placeholder')}
-            header={t('disconnected.header')}
-            description={
-              <>
-                <Text>{t('disconnected.description')}</Text>
-                <TonConnectButton className={e('button')} />
-              </>
-            }
-          />
-        </Page>
-      </TonConnectUIProvider>
+      <Page>
+        <Placeholder
+          className={e('placeholder')}
+          header={t('disconnected.header')}
+          description={
+            <>
+              <Text>{t('disconnected.description')}</Text>
+              <TonConnectButton className={e('button')} />
+            </>
+          }
+        />
+      </Page>
     );
   }
 
   return (
-    <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
-      <Page>
-        <List>
-          {screen.provider?.imageUrl && (
-            <>
-              <Section>
-                <Cell
-                  before={
-                    <Avatar
-                      src={screen.provider.imageUrl}
-                      alt={t('provider.logoAlt')}
-                      width={60}
-                      height={60}
-                    />
+    <Page>
+      <List>
+        {screen.provider?.imageUrl && (
+          <>
+            <Section>
+              <Cell
+                before={
+                  <Avatar
+                    src={screen.provider.imageUrl}
+                    alt={t('provider.logoAlt')}
+                    width={60}
+                    height={60}
+                  />
+                }
+                after={<Navigation>{t('provider.aboutWallet')}</Navigation>}
+                subtitle={screen.provider.appName}
+                onClick={(event) => {
+                  event.preventDefault();
+                  if (screen.provider?.aboutUrl) {
+                    openExternalLink(screen.provider.aboutUrl);
                   }
-                  after={<Navigation>{t('provider.aboutWallet')}</Navigation>}
-                  subtitle={screen.provider.appName}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    if (screen.provider?.aboutUrl) {
-                      openExternalLink(screen.provider.aboutUrl);
-                    }
-                  }}
-                >
-                  <Title level="3">{screen.provider.name}</Title>
-                </Cell>
-              </Section>
-              <TonConnectButton className={e('button-connected')} />
-            </>
-          )}
-          <DisplayData header={t('account.header')} rows={accountRows} />
-          <DisplayData header={t('device.header')} rows={deviceRows} />
-        </List>
-      </Page>
+                }}
+              >
+                <Title level="3">{screen.provider.name}</Title>
+              </Cell>
+            </Section>
+            <TonConnectButton className={e('button-connected')} />
+          </>
+        )}
+        <DisplayData header={t('account.header')} rows={accountRows} />
+        <DisplayData header={t('device.header')} rows={deviceRows} />
+      </List>
+    </Page>
+  );
+}
+
+export function TonConnectScreen() {
+  return (
+    <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
+      <TonConnectScreenContent />
     </TonConnectUIProvider>
   );
 }

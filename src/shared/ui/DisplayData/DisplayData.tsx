@@ -1,6 +1,6 @@
 'use client';
 
-import { Cell, Checkbox, Section } from '@telegram-apps/telegram-ui';
+import { Cell, Section } from '@telegram-apps/telegram-ui';
 import { useTranslations } from 'next-intl';
 import type { FC, ReactNode } from 'react';
 
@@ -42,7 +42,7 @@ export const DisplayData: FC<DisplayDataProps> = ({ header, footer, rows }) => {
             );
             break;
           case 'boolean':
-            valueNode = <Checkbox checked={item.value.checked} disabled />;
+            valueNode = item.value.checked ? t('yes') : t('no');
             break;
           case 'color':
             valueNode = <RGB color={item.value.color} />;

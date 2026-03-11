@@ -47,6 +47,16 @@ export function HomeScreen() {
               </div>
             </Cell>
           </AppLink>
+          <AppLink href={routePaths.application}>
+            <Cell>
+              <div className="home-screen__cell-copy">
+                <span className="home-screen__cell-title">{t('features.application.title')}</span>
+                <span className="home-screen__cell-subtitle">
+                  {t('features.application.subtitle')}
+                </span>
+              </div>
+            </Cell>
+          </AppLink>
         </Section>
         <Section>
           <div className="home-screen__section-copy">

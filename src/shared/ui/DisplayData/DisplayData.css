@@ -10,7 +10,7 @@
 .display-data__footer {
   margin-top: 4px;
   color: var(--tg-theme-text-color, #11181c);
-  opacity: 0.78;
+  opacity: 0.9;
 }
 
 .display-data__line {
@@ -19,7 +19,7 @@
 
 .display-data__line-title {
   color: var(--tg-theme-text-color, #11181c);
-  opacity: 0.78;
+  opacity: 0.9;
 }
 
 .display-data__line-value {

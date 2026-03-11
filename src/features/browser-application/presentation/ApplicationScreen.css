@@ -1,0 +1,29 @@
+.application-screen__copy {
+  padding: 16px 24px 8px;
+}
+
+.application-screen__title {
+  color: var(--tg-theme-text-color, #11181c);
+}
+
+.application-screen__description,
+.application-screen__notice {
+  margin-top: 4px;
+  color: var(--tg-theme-text-color, #11181c);
+  opacity: 0.92;
+}
+
+.application-screen__actions {
+  display: grid;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.application-screen__button-primary {
+  background-color: #0057b8;
+  color: #ffffff;
+}
+
+.application-screen__button-neutral {
+  color: #11181c;
+}

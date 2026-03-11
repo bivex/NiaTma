@@ -12,6 +12,11 @@ import './_assets/globals.css';
 export const metadata: Metadata = {
   title: 'Your Application Title Goes Here',
   description: 'Your application description goes here',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'NiaTma',
+  },
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {

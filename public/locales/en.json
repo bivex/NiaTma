@@ -2,13 +2,19 @@
   "shared": {
     "displayData": {
       "open": "Open",
-      "empty": "empty"
+      "empty": "empty",
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "home": {
     "features": {
       "header": "Features",
       "footer": "You can use these pages to learn more about features, provided by Telegram Mini Apps and other useful projects",
+      "application": {
+        "title": "Browser Application",
+        "subtitle": "Manifest, storage, service worker and browser capability diagnostics"
+      },
       "tonConnect": {
         "title": "TON Connect",
         "subtitle": "Connect your TON wallet",
@@ -84,6 +90,101 @@
         "platform": "Platform",
         "features": "Features"
       }
+    }
+  },
+  "application": {
+    "loading": {
+      "header": "Loading browser application diagnostics",
+      "description": "Reading browser capabilities and storage state."
+    },
+    "intro": {
+      "header": "Browser Application tools",
+      "description": "Use these actions to expose real Manifest, Service Worker, Storage, Cache Storage and permission state in DevTools > Application."
+    },
+    "actions": {
+      "registerServiceWorker": "Register service worker",
+      "unregisterServiceWorker": "Unregister service worker",
+      "seedDemoData": "Seed demo storage data",
+      "clearDemoData": "Clear demo storage data",
+      "requestPersistence": "Request persistent storage",
+      "requestNotifications": "Request notification permission",
+      "registerBackgroundSync": "Register background sync",
+      "refresh": "Refresh diagnostics"
+    },
+    "messages": {
+      "idle": "",
+      "refreshed": "Diagnostics refreshed.",
+      "serviceWorkerRegistered": "Service worker registered. Reload once if you want it to control the current page.",
+      "serviceWorkerUnregistered": "Service worker unregistered.",
+      "demoDataSeeded": "Demo entries were written into storage APIs for easier inspection in DevTools.",
+      "demoDataCleared": "Demo storage entries were cleared.",
+      "notificationPermissionUpdated": "Notification permission state was updated.",
+      "storagePersistenceUpdated": "Persistent storage request was completed.",
+      "backgroundSyncRegistered": "Background sync was registered on the current service worker.",
+      "unsupported": "This browser does not expose the requested capability in the current environment.",
+      "error": "Unable to complete the action in the current browser environment."
+    },
+    "sections": {
+      "application": {
+        "header": "Application",
+        "footer": "The manifest link and display mode help verify installability and current shell mode."
+      },
+      "serviceWorker": {
+        "header": "Service worker",
+        "footer": "Register the worker to make the Service Workers and Background Sync panels useful."
+      },
+      "storage": {
+        "header": "Storage",
+        "footer": "Use the seed action to populate Local Storage, Session Storage, IndexedDB, Cookies and Cache Storage."
+      },
+      "capabilities": {
+        "header": "Capabilities",
+        "footer": "These values come from runtime feature detection in the current browser."
+      },
+      "browserManaged": {
+        "header": "Browser-managed diagnostics",
+        "footer": "Some Application-panel entries depend on browser internals and cannot be directly controlled by app code."
+      }
+    },
+    "fields": {
+      "origin": "Origin",
+      "manifest": "Manifest",
+      "displayMode": "Display mode",
+      "standalone": "Standalone mode",
+      "frameCount": "Frames",
+      "serviceWorkerSupported": "Service worker supported",
+      "serviceWorkerRegistered": "Service worker registered",
+      "serviceWorkerControlled": "Service worker controls page",
+      "serviceWorkerScope": "Service worker scope",
+      "localStorageSupported": "Local Storage supported",
+      "localStorageDemo": "Local Storage demo entry",
+      "sessionStorageSupported": "Session Storage supported",
+      "sessionStorageDemo": "Session Storage demo entry",
+      "indexedDbSupported": "IndexedDB supported",
+      "indexedDbDemo": "IndexedDB demo entry",
+      "cookiesEnabled": "Cookies enabled",
+      "cookieDemo": "Cookie demo entry",
+      "cacheStorageSupported": "Cache Storage supported",
+      "cacheDemo": "Cache Storage demo cache",
+      "storagePersistSupported": "Persistent storage API supported",
+      "storagePersisted": "Persistent storage granted",
+      "storageQuota": "Storage quota",
+      "storageUsage": "Storage usage",
+      "notificationPermission": "Notification permission",
+      "pushMessagingSupported": "Push messaging supported",
+      "backgroundSyncSupported": "Background sync supported",
+      "periodicBackgroundSyncSupported": "Periodic background sync supported",
+      "paymentHandlerSupported": "Payment handler supported",
+      "reportingApiSupported": "Reporting API supported",
+      "privateStateTokensSupported": "Private state tokens supported",
+      "interestGroupsSupported": "Interest groups supported",
+      "sharedStorage": "Shared Storage",
+      "storageBucketsSupported": "Storage buckets supported",
+      "speculativeLoadsSupported": "Speculative loads supported",
+      "backgroundFetchSupported": "Background Fetch supported",
+      "backForwardCache": "Back/forward cache",
+      "bounceTrackingMitigations": "Bounce tracking mitigations",
+      "backgroundServices": "Background services"
     }
   }
 }

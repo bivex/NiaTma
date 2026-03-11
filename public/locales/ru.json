@@ -2,13 +2,19 @@
   "shared": {
     "displayData": {
       "open": "Открыть",
-      "empty": "пусто"
+      "empty": "пусто",
+      "yes": "Да",
+      "no": "Нет"
     }
   },
   "home": {
     "features": {
       "header": "Возможности",
       "footer": "На этих страницах можно посмотреть возможности Telegram Mini Apps и связанных интеграций",
+      "application": {
+        "title": "Browser Application",
+        "subtitle": "Manifest, storage, service worker и диагностика browser capabilities"
+      },
       "tonConnect": {
         "title": "TON Connect",
         "subtitle": "Подключите ваш TON-кошелёк",
@@ -84,6 +90,101 @@
         "platform": "Платформа",
         "features": "Возможности"
       }
+    }
+  },
+  "application": {
+    "loading": {
+      "header": "Загрузка browser application-диагностики",
+      "description": "Считываю browser capabilities и состояние storage."
+    },
+    "intro": {
+      "header": "Browser Application tools",
+      "description": "Эти действия помогают быстро наполнить DevTools > Application реальными сущностями: manifest, service worker, storage, cache storage и permission state."
+    },
+    "actions": {
+      "registerServiceWorker": "Зарегистрировать service worker",
+      "unregisterServiceWorker": "Удалить service worker",
+      "seedDemoData": "Записать demo-данные в storage",
+      "clearDemoData": "Очистить demo-данные из storage",
+      "requestPersistence": "Запросить persistent storage",
+      "requestNotifications": "Запросить разрешение на notifications",
+      "registerBackgroundSync": "Зарегистрировать background sync",
+      "refresh": "Обновить диагностику"
+    },
+    "messages": {
+      "idle": "",
+      "refreshed": "Диагностика обновлена.",
+      "serviceWorkerRegistered": "Service worker зарегистрирован. При необходимости обновите страницу, чтобы он начал контролировать текущий документ.",
+      "serviceWorkerUnregistered": "Service worker удалён.",
+      "demoDataSeeded": "Demo-записи созданы в storage API, чтобы их было удобнее смотреть в DevTools.",
+      "demoDataCleared": "Demo-записи из storage удалены.",
+      "notificationPermissionUpdated": "Состояние разрешения на notifications обновлено.",
+      "storagePersistenceUpdated": "Запрос persistent storage завершён.",
+      "backgroundSyncRegistered": "Background sync зарегистрирован на текущем service worker.",
+      "unsupported": "В текущем окружении браузер не предоставляет запрошенную capability.",
+      "error": "Не удалось выполнить действие в текущем browser environment."
+    },
+    "sections": {
+      "application": {
+        "header": "Application",
+        "footer": "Manifest и display mode помогают проверить installability и текущий shell mode."
+      },
+      "serviceWorker": {
+        "header": "Service worker",
+        "footer": "Зарегистрируйте worker, чтобы секции Service Workers и Background Sync стали полезнее."
+      },
+      "storage": {
+        "header": "Storage",
+        "footer": "Используйте seed action, чтобы наполнить Local Storage, Session Storage, IndexedDB, Cookies и Cache Storage."
+      },
+      "capabilities": {
+        "header": "Capabilities",
+        "footer": "Эти значения получены через runtime feature detection в текущем браузере."
+      },
+      "browserManaged": {
+        "header": "Browser-managed diagnostics",
+        "footer": "Часть пунктов из Application-панели зависит от внутренних механизмов браузера и не управляется напрямую кодом приложения."
+      }
+    },
+    "fields": {
+      "origin": "Origin",
+      "manifest": "Manifest",
+      "displayMode": "Display mode",
+      "standalone": "Standalone mode",
+      "frameCount": "Frames",
+      "serviceWorkerSupported": "Поддержка service worker",
+      "serviceWorkerRegistered": "Service worker зарегистрирован",
+      "serviceWorkerControlled": "Service worker контролирует страницу",
+      "serviceWorkerScope": "Service worker scope",
+      "localStorageSupported": "Поддержка Local Storage",
+      "localStorageDemo": "Demo-запись в Local Storage",
+      "sessionStorageSupported": "Поддержка Session Storage",
+      "sessionStorageDemo": "Demo-запись в Session Storage",
+      "indexedDbSupported": "Поддержка IndexedDB",
+      "indexedDbDemo": "Demo-запись в IndexedDB",
+      "cookiesEnabled": "Cookies включены",
+      "cookieDemo": "Demo-cookie",
+      "cacheStorageSupported": "Поддержка Cache Storage",
+      "cacheDemo": "Demo-cache в Cache Storage",
+      "storagePersistSupported": "Поддержка persistent storage API",
+      "storagePersisted": "Persistent storage выдан",
+      "storageQuota": "Storage quota",
+      "storageUsage": "Storage usage",
+      "notificationPermission": "Разрешение на notifications",
+      "pushMessagingSupported": "Поддержка push messaging",
+      "backgroundSyncSupported": "Поддержка background sync",
+      "periodicBackgroundSyncSupported": "Поддержка periodic background sync",
+      "paymentHandlerSupported": "Поддержка payment handler",
+      "reportingApiSupported": "Поддержка Reporting API",
+      "privateStateTokensSupported": "Поддержка private state tokens",
+      "interestGroupsSupported": "Поддержка interest groups",
+      "sharedStorage": "Shared Storage",
+      "storageBucketsSupported": "Поддержка storage buckets",
+      "speculativeLoadsSupported": "Поддержка speculative loads",
+      "backgroundFetchSupported": "Поддержка Background Fetch",
+      "backForwardCache": "Back/forward cache",
+      "bounceTrackingMitigations": "Bounce tracking mitigations",
+      "backgroundServices": "Background services"
     }
   }
 }

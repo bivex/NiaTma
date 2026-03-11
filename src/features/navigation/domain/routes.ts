@@ -1,5 +1,6 @@
 export const routePaths = {
   home: '/',
+  application: '/application',
   initData: '/init-data',
   launchParams: '/launch-params',
   themeParams: '/theme-params',
