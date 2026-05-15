@@ -39,7 +39,10 @@ function mapPrimitiveRow(title: string, value: unknown): DisplayDataRow {
 }
 
 function mapRecordRows(record: Record<string, unknown>): DisplayDataRow[] {
-  return Object.entries(record).map(([title, value]) => mapPrimitiveRow(title, value));
+  return Object.entries(record).reduce<DisplayDataRow[]>((acc, [title, value]) => {
+    acc.push(mapPrimitiveRow(title, value));
+    return acc;
+  }, []);
 }
 
 function formatThemeParamName(title: string) {

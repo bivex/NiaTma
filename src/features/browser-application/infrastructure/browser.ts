@@ -37,9 +37,9 @@ const getDisplayMode = () => {
 const wrapIdbRequest = <T>(
   request: IDBRequest<T>,
 ): Promise<T> =>
-  new Promise<T>((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+  new Promise<T>((settle, err) => {
+    request.onsuccess = () => settle(request.result);
+    request.onerror = () => err(request.error);
   });
 
 const awaitTransactionComplete = (transaction: IDBTransaction, database: IDBDatabase): Promise<void> =>
@@ -48,7 +48,7 @@ const awaitTransactionComplete = (transaction: IDBTransaction, database: IDBData
   });
 
 const openIndexedDb = () =>
-  new Promise<IDBDatabase>((resolve, reject) => {
+  new Promise<IDBDatabase>((onFulfill, onReject) => {
     const request = indexedDB.open(INDEXED_DB_NAME, 1);
     request.onupgradeneeded = () => {
       const database = request.result;
@@ -56,8 +56,8 @@ const openIndexedDb = () =>
         database.createObjectStore(INDEXED_DB_STORE);
       }
     };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    request.onsuccess = () => onFulfill(request.result);
+    request.onerror = () => onReject(request.error);
   });
 
 const hasIndexedDbDemo = async () => {
@@ -74,24 +74,31 @@ const hasIndexedDbDemo = async () => {
   }
 };
 
+const inIdbWrite = <T>(
+  database: IDBDatabase,
+  writeFn: (store: IDBObjectStore) => IDBRequest<T>,
+): Promise<void> => {
+  const transaction = database.transaction(INDEXED_DB_STORE, 'readwrite');
+  const request = writeFn(transaction.objectStore(INDEXED_DB_STORE));
+  return new Promise<void>((fulfill, reject) => {
+    request.onsuccess = () => fulfill(request.result as void | PromiseLike<void>);
+    request.onerror = () => reject(request.error);
+    transaction.oncomplete = () => { database.close(); fulfill(); };
+  });
+};
+
 const writeIndexedDbDemo = async () => {
   if (!hasWindowFeature('indexedDB')) return;
   const database = await openIndexedDb();
-  const transaction = database.transaction(INDEXED_DB_STORE, 'readwrite');
-  const request = transaction
-    .objectStore(INDEXED_DB_STORE)
-    .put({ createdAt: new Date().toISOString(), source: 'application-screen' }, INDEXED_DB_KEY);
-  await wrapIdbRequest(request);
-  await awaitTransactionComplete(transaction, database);
+  await inIdbWrite(database, (store) =>
+    store.put({ createdAt: new Date().toISOString(), source: 'application-screen' }, INDEXED_DB_KEY),
+  );
 };
 
 const clearIndexedDbDemo = async () => {
   if (!hasWindowFeature('indexedDB')) return;
   const database = await openIndexedDb();
-  const transaction = database.transaction(INDEXED_DB_STORE, 'readwrite');
-  const request = transaction.objectStore(INDEXED_DB_STORE).delete(INDEXED_DB_KEY);
-  await wrapIdbRequest(request);
-  await awaitTransactionComplete(transaction, database);
+  await inIdbWrite(database, (store) => store.delete(INDEXED_DB_KEY));
 };
 
 const getApplicationServiceWorkerRegistration = async () => {

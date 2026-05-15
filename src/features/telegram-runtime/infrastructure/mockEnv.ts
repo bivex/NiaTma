@@ -1,5 +1,8 @@
 import { emitEvent, isTMA, mockTelegramEnv } from '@tma.js/sdk-react';
 
+const TEN_DOT = '10.';
+const PRIVATE_B_PREFIX = '192.168.';
+
 export function isLocalPreviewHost(hostname: string): boolean {
   return (
     hostname === 'localhost' ||
@@ -9,7 +12,8 @@ export function isLocalPreviewHost(hostname: string): boolean {
     hostname === '[::1]' ||
     hostname.endsWith('.local') ||
     hostname.startsWith('192.168.') ||
-    hostname.startsWith('10.') ||
+    hostname.startsWith(TEN_DOT) ||
+    hostname.startsWith(PRIVATE_B_PREFIX) ||
     /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname)
   );
 }
