@@ -8,15 +8,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
+  authApiService,
   authSessionQueryKey,
-  fetchAuthSession,
-  logoutAuthSession,
-  signInWithDevLogin,
-  signInWithTelegram,
 } from '../application/authApi';
 import { sanitizePersistedAuthSessionStatus, useAuthStore } from '../application/authStore';
 import { resolvePostAuthPath } from '../application/navigation';
-import { buildAuthScreenModel } from '../application/presenters';
+import { buildAuthScreenModel, toAuthScreenSnapshot } from '../application/presenters';
 import { routePaths } from '@/features/navigation/domain/routes';
 import { Page } from '@/features/navigation/presentation/Page';
 import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
@@ -45,7 +42,7 @@ export function AuthScreen() {
   );
   const sessionQuery = useQuery({
     queryKey: authSessionQueryKey,
-    queryFn: fetchAuthSession,
+    queryFn: authApiService.fetchSession,
     initialData: initialSessionStatus,
   });
 
@@ -60,7 +57,7 @@ export function AuthScreen() {
   };
 
   const telegramMutation = useMutation({
-    mutationFn: () => signInWithTelegram(rawInitData || ''),
+    mutationFn: () => authApiService.signInWithTelegram(rawInitData || ''),
     onSuccess: async (status) => {
       syncSessionStatus(status);
       setNotice(t('messages.telegramSuccess'));
@@ -76,7 +73,7 @@ export function AuthScreen() {
   });
 
   const devLoginMutation = useMutation({
-    mutationFn: signInWithDevLogin,
+    mutationFn: authApiService.signInWithDevLogin,
     onSuccess: async (status) => {
       syncSessionStatus(status);
       setNotice(t('messages.devSuccess'));
@@ -92,7 +89,7 @@ export function AuthScreen() {
   });
 
   const logoutMutation = useMutation({
-    mutationFn: logoutAuthSession,
+    mutationFn: authApiService.logoutSession,
     onSuccess: async (status) => {
       syncSessionStatus(status);
       setNotice(t('messages.logoutSuccess'));
@@ -119,35 +116,23 @@ export function AuthScreen() {
 
   const screen = useMemo(
     () =>
-      buildAuthScreenModel({
-        rawInitDataPresent: Boolean(rawInitData),
-        telegramAuthAvailable: sessionQuery.data?.capabilities.telegramAuthAvailable ?? false,
-        sessionSigningConfigured: sessionQuery.data?.capabilities.sessionSigningConfigured ?? false,
-        devLoginAvailable: sessionQuery.data?.capabilities.devLoginAvailable ?? false,
-        sessionStatus: sessionQuery.isPending ? t('status.loading') : sessionQuery.data?.status || t('status.anonymous'),
-        sessionProvider: session?.provider,
-        sessionSubject: session?.sub,
-        sessionDisplayName: displayName || initDataUser?.first_name,
-        sessionUsername: session?.user.username,
-        sessionWalletProvider: session?.wallet?.provider,
-        sessionWalletAddress: session?.wallet?.address,
-        sessionWalletChain: session?.wallet?.chain,
-        sessionIssuedAt: session ? timeFormatter.format(session.issuedAt) : undefined,
-        sessionExpiresAt: session ? timeFormatter.format(session.expiresAt) : undefined,
-        initDataHref: routePaths.initData,
-        platformHref: routePaths.platform,
-        profileHref: routePaths.profile,
-        tonConnectHref: routePaths.tonConnect,
-      }),
+      buildAuthScreenModel(
+        toAuthScreenSnapshot(sessionQuery.data, {
+          rawInitDataPresent: Boolean(rawInitData),
+          isPending: sessionQuery.isPending,
+          t,
+          formatTime: (date) => timeFormatter.format(date),
+          initDataUserFirstName: initDataUser?.first_name,
+          initDataHref: routePaths.initData,
+          platformHref: routePaths.platform,
+          profileHref: routePaths.profile,
+          tonConnectHref: routePaths.tonConnect,
+        }),
+      ),
     [
-      displayName,
       initDataUser?.first_name,
       rawInitData,
-      session,
-      sessionQuery.data?.capabilities.devLoginAvailable,
-      sessionQuery.data?.capabilities.sessionSigningConfigured,
-      sessionQuery.data?.capabilities.telegramAuthAvailable,
-      sessionQuery.data?.status,
+      sessionQuery.data,
       sessionQuery.isPending,
       t,
       timeFormatter,

@@ -8,16 +8,7 @@ import type {
   BrowserApplicationSnapshot,
 } from '../domain/models';
 import { buildBrowserApplicationScreenModel } from './presenters';
-import {
-  clearBrowserApplicationDemoData,
-  readBrowserApplicationSnapshot,
-  registerApplicationServiceWorker,
-  registerBrowserBackgroundSync,
-  requestBrowserNotificationPermission,
-  requestBrowserStoragePersistence,
-  seedBrowserApplicationDemoData,
-  unregisterApplicationServiceWorker,
-} from '../infrastructure/browser';
+import { browserAppService } from '../infrastructure/browser';
 
 export function useBrowserApplication() {
   const [snapshot, setSnapshot] = useState<BrowserApplicationSnapshot | null>(null);
@@ -25,7 +16,7 @@ export function useBrowserApplication() {
   const [pendingAction, setPendingAction] = useState<BrowserApplicationActionId | null>(null);
 
   const loadSnapshot = useCallback(async () => {
-    const nextSnapshot = await readBrowserApplicationSnapshot();
+    const nextSnapshot = await browserAppService.readSnapshot();
     setSnapshot(nextSnapshot);
     return nextSnapshot;
   }, []);
@@ -63,32 +54,32 @@ export function useBrowserApplication() {
     pendingAction,
     refresh: () => runAction('refresh', async () => void (await loadSnapshot()), 'refreshed'),
     registerServiceWorker: () =>
-      runAction('registerServiceWorker', registerApplicationServiceWorker, 'serviceWorkerRegistered'),
+      runAction('registerServiceWorker', browserAppService.registerServiceWorker, 'serviceWorkerRegistered'),
     unregisterServiceWorker: () =>
       runAction(
         'unregisterServiceWorker',
-        unregisterApplicationServiceWorker,
+        browserAppService.unregisterServiceWorker,
         'serviceWorkerUnregistered',
       ),
-    seedDemoData: () => runAction('seedDemoData', seedBrowserApplicationDemoData, 'demoDataSeeded'),
+    seedDemoData: () => runAction('seedDemoData', browserAppService.seedDemoData, 'demoDataSeeded'),
     clearDemoData: () =>
-      runAction('clearDemoData', clearBrowserApplicationDemoData, 'demoDataCleared'),
+      runAction('clearDemoData', browserAppService.clearDemoData, 'demoDataCleared'),
     requestNotifications: () =>
       runAction(
         'requestNotifications',
-        requestBrowserNotificationPermission,
+        browserAppService.requestNotificationPermission,
         'notificationPermissionUpdated',
       ),
     requestPersistence: () =>
       runAction(
         'requestPersistence',
-        requestBrowserStoragePersistence,
+        browserAppService.requestStoragePersistence,
         'storagePersistenceUpdated',
       ),
     registerBackgroundSync: () =>
       runAction(
         'registerBackgroundSync',
-        registerBrowserBackgroundSync,
+        browserAppService.registerBackgroundSync,
         'backgroundSyncRegistered',
       ),
   };

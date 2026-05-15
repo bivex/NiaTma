@@ -5,9 +5,9 @@ import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo } from 'react';
 
-import { authProfileQueryKey, fetchAuthProfile } from '../application/authApi';
+import { authApiService, authProfileQueryKey } from '../application/authApi';
 import { sanitizePersistedAuthProfile, useAuthStore } from '../application/authStore';
-import { buildProfileScreenModel } from '../application/profile';
+import { buildProfileScreenModel, toProfileScreenSnapshot } from '../application/profile';
 import type { AuthUserProfile } from '../domain/models';
 import { routePaths } from '@/features/navigation/domain/routes';
 import { Page } from '@/features/navigation/presentation/Page';
@@ -23,7 +23,7 @@ export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserPro
   const initialPersistedProfile = useMemo(() => sanitizePersistedAuthProfile(persistedProfile), [persistedProfile]);
   const profileQuery = useQuery({
     queryKey: authProfileQueryKey,
-    queryFn: fetchAuthProfile,
+    queryFn: authApiService.fetchProfile,
     initialData: initialProfile ?? initialPersistedProfile,
   });
 
@@ -45,49 +45,19 @@ export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserPro
     [locale],
   );
 
-  const screen = useMemo(() => {
-    const profile = profileQuery.data;
-
-    if (!profile) {
-      return buildProfileScreenModel({
-        subject: t('status.loading'),
-        provider: t('status.loading'),
-        userId: t('status.loading'),
-        displayName: undefined,
-        username: undefined,
-        languageCode: undefined,
-        walletProvider: undefined,
-        walletAddress: undefined,
-        walletChain: undefined,
-        walletPublicKey: undefined,
-        walletLinkedAt: undefined,
-        issuedAt: t('status.loading'),
-        expiresAt: t('status.loading'),
-        authHref: routePaths.auth,
-        platformHref: routePaths.platform,
-        tonConnectHref: routePaths.tonConnect,
-      });
-    }
-
-    return buildProfileScreenModel({
-      subject: profile.subject,
-      provider: profile.provider,
-      userId: profile.userId,
-      displayName: profile.displayName,
-      username: profile.username,
-      languageCode: profile.languageCode,
-      walletProvider: profile.wallet?.provider,
-      walletAddress: profile.wallet?.address,
-      walletChain: profile.wallet?.chain,
-      walletPublicKey: profile.wallet?.publicKey,
-      walletLinkedAt: profile.wallet ? timeFormatter.format(profile.wallet.linkedAt) : undefined,
-      issuedAt: timeFormatter.format(profile.issuedAt),
-      expiresAt: timeFormatter.format(profile.expiresAt),
-      authHref: routePaths.auth,
-      platformHref: routePaths.platform,
-      tonConnectHref: routePaths.tonConnect,
-    });
-  }, [profileQuery.data, t, timeFormatter]);
+  const screen = useMemo(
+    () =>
+      buildProfileScreenModel(
+        toProfileScreenSnapshot(profileQuery.data, {
+          authHref: routePaths.auth,
+          platformHref: routePaths.platform,
+          tonConnectHref: routePaths.tonConnect,
+          formatTime: (date) => timeFormatter.format(date),
+          t,
+        }),
+      ),
+    [profileQuery.data, t, timeFormatter],
+  );
 
   return (
     <Page swipeBack>

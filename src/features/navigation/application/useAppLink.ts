@@ -4,7 +4,7 @@ import { type JSX, type MouseEventHandler, useCallback } from 'react';
 import type { LinkProps as NextLinkProps } from 'next/link';
 
 import { getHrefPath, isExternalUrl } from '../domain/links';
-import { openExternalLink } from '../infrastructure/telegram';
+import { telegramNavigationService } from '../infrastructure/telegram';
 
 export function useAppLink(
   href: NextLinkProps['href'],
@@ -20,7 +20,7 @@ export function useAppLink(
 
       if (isExternalUrl(targetUrl, currentUrl)) {
         event.preventDefault();
-        openExternalLink(targetUrl.toString());
+        telegramNavigationService.openExternalLink(targetUrl.toString());
       }
     },
     [href, propsOnClick],

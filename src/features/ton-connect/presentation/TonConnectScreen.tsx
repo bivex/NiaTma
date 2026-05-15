@@ -18,20 +18,20 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
+  authApiService,
   authProfileQueryKey,
   authSessionQueryKey,
   authTonProofPayloadQueryKey,
-  fetchAuthSession,
-  fetchTonProofPayload,
-  linkAuthWallet,
-  unlinkAuthWallet,
-  verifyTonProofSession,
 } from '@/features/auth/application/authApi';
 import { resolvePostAuthPath } from '@/features/auth/application/navigation';
 import { sanitizePersistedAuthSessionStatus, useAuthStore } from '@/features/auth/application/authStore';
-import { buildTonConnectScreenModel } from '@/features/ton-connect/application/presenters';
+import {
+  buildTonConnectScreenModel,
+  toAuthLinkedWalletInput,
+  toVerifyAuthTonProofInput,
+} from '@/features/ton-connect/application/presenters';
 import { routePaths } from '@/features/navigation/domain/routes';
-import { openExternalLink } from '@/features/navigation/infrastructure/telegram';
+import { telegramNavigationService } from '@/features/navigation/infrastructure/telegram';
 import { AppLink } from '@/features/navigation/presentation/AppLink';
 import { Page } from '@/features/navigation/presentation/Page';
 import { useTonWalletSnapshot } from '@/features/ton-connect/infrastructure/telegram';
@@ -63,12 +63,12 @@ function TonConnectScreenContent() {
   );
   const sessionQuery = useQuery({
     queryKey: authSessionQueryKey,
-    queryFn: fetchAuthSession,
+    queryFn: authApiService.fetchSession,
     initialData: initialSessionStatus,
   });
   const tonProofPayloadQuery = useQuery({
     queryKey: authTonProofPayloadQueryKey,
-    queryFn: fetchTonProofPayload,
+    queryFn: authApiService.fetchTonProofPayload,
     staleTime: 60_000,
     refetchInterval: 60_000,
     retry: 1,
@@ -110,26 +110,7 @@ function TonConnectScreenContent() {
     }
   }, [rawWallet]);
 
-  const walletPayload = useMemo(() => {
-    const address = wallet?.account.address?.trim();
-
-    if (!address) {
-      return undefined;
-    }
-
-    const currentWallet = wallet;
-
-    if (!currentWallet) {
-      return undefined;
-    }
-
-    return {
-      address,
-      chain: currentWallet.account.chain,
-      publicKey: currentWallet.account.publicKey,
-      provider: currentWallet.provider?.name || currentWallet.provider?.appName,
-    };
-  }, [wallet]);
+  const walletPayload = useMemo(() => toAuthLinkedWalletInput(wallet), [wallet]);
 
   const refreshAuth = async () => {
     await Promise.all([
@@ -139,7 +120,7 @@ function TonConnectScreenContent() {
   };
 
   const verifyMutation = useMutation({
-    mutationFn: verifyTonProofSession,
+    mutationFn: authApiService.verifyTonProofSession,
     onSuccess: async (status) => {
       syncSessionStatus(status);
       setNotice(t('messages.tonProofSuccess'));
@@ -157,7 +138,7 @@ function TonConnectScreenContent() {
   });
 
   const linkMutation = useMutation({
-    mutationFn: linkAuthWallet,
+    mutationFn: authApiService.linkWallet,
     onSuccess: async (status) => {
       syncSessionStatus(status);
       setNotice(t('messages.linkSuccess'));
@@ -169,7 +150,7 @@ function TonConnectScreenContent() {
   });
 
   const unlinkMutation = useMutation({
-    mutationFn: unlinkAuthWallet,
+    mutationFn: authApiService.unlinkWallet,
     onSuccess: async (status) => {
       syncSessionStatus(status);
       setNotice(t('messages.unlinkSuccess'));
@@ -182,26 +163,26 @@ function TonConnectScreenContent() {
 
   const handleWalletStatusChange = useCallback(
     async (nextWallet: ReturnType<typeof useTonWallet>) => {
-      const tonProofReply = nextWallet?.connectItems?.tonProof;
-
-      if (!nextWallet || !tonProofReply) {
+      if (!nextWallet) {
         return;
       }
 
-      if (!('proof' in tonProofReply)) {
-        setNotice(t('messages.tonProofRejected'));
-        return;
-      }
+      const verifyInput = toVerifyAuthTonProofInput(nextWallet as any);
 
-      if (!nextWallet.account.publicKey) {
-        setNotice(t('messages.tonProofMissingPublicKey'));
+      if (!verifyInput) {
+        const tonProofReply = nextWallet.connectItems?.tonProof;
+        if (tonProofReply && !('proof' in tonProofReply)) {
+          setNotice(t('messages.tonProofRejected'));
+        } else if (!nextWallet.account.publicKey) {
+          setNotice(t('messages.tonProofMissingPublicKey'));
+        }
         return;
       }
 
       const proofFingerprint = [
-        nextWallet.account.address,
-        tonProofReply.proof.payload,
-        tonProofReply.proof.signature,
+        verifyInput.address,
+        verifyInput.proof.payload,
+        verifyInput.proof.signature,
       ].join(':');
 
       if (handledProofRef.current === proofFingerprint) {
@@ -210,14 +191,7 @@ function TonConnectScreenContent() {
 
       handledProofRef.current = proofFingerprint;
 
-      await verifyMutation.mutateAsync({
-        address: nextWallet.account.address,
-        chain: nextWallet.account.chain,
-        publicKey: nextWallet.account.publicKey,
-        walletStateInit: nextWallet.account.walletStateInit,
-        provider: 'name' in nextWallet ? nextWallet.name : undefined,
-        proof: tonProofReply.proof,
-      });
+      await verifyMutation.mutateAsync(verifyInput);
     },
     [t, verifyMutation],
   );
@@ -293,7 +267,7 @@ function TonConnectScreenContent() {
                   onClick={(event) => {
                     event.preventDefault();
                     if (screen.provider?.aboutUrl) {
-                      openExternalLink(screen.provider.aboutUrl);
+                      telegramNavigationService.openExternalLink(screen.provider.aboutUrl);
                     }
                   }}
                 >

@@ -2,17 +2,17 @@
 
 import { useEffect } from 'react';
 
-import { disableVerticalSwipe, enableVerticalSwipe, mountSwipeBehavior, unmountSwipeBehavior } from '../infrastructure/telegram';
+import { telegramSwipeService } from '../infrastructure/telegram';
 
 export function useVerticalSwipeBehavior(allowVerticalSwipe: boolean) {
   useEffect(() => {
     try {
-      mountSwipeBehavior();
+      telegramSwipeService.mount();
 
       if (allowVerticalSwipe) {
-        enableVerticalSwipe();
+        telegramSwipeService.enableVertical();
       } else {
-        disableVerticalSwipe();
+        telegramSwipeService.disableVertical();
       }
     } catch {
       // feature not available in current environment
@@ -20,7 +20,7 @@ export function useVerticalSwipeBehavior(allowVerticalSwipe: boolean) {
 
     return () => {
       try {
-        unmountSwipeBehavior();
+        telegramSwipeService.unmount();
       } catch {
         // feature not available in current environment
       }

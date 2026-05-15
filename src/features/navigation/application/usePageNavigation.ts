@@ -5,11 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { useSwipeBackNavigation } from './useSwipeBackNavigation';
 import { useVerticalSwipeBehavior } from './useVerticalSwipeBehavior';
-import {
-  hideBackNavigation,
-  onBackNavigation,
-  showBackNavigation,
-} from '../infrastructure/telegram';
+import { telegramNavigationService } from '../infrastructure/telegram';
 
 export function usePageNavigation({
   back = true,
@@ -27,14 +23,14 @@ export function usePageNavigation({
 
   useEffect(() => {
     if (back) {
-      showBackNavigation();
+      telegramNavigationService.showBack();
     } else {
-      hideBackNavigation();
+      telegramNavigationService.hideBack();
     }
   }, [back]);
 
   useEffect(() => {
-    return onBackNavigation(() => {
+    return telegramNavigationService.onBack(() => {
       router.back();
     });
   }, [router]);
