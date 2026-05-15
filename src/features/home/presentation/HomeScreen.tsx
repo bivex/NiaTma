@@ -28,6 +28,7 @@ export function HomeScreen() {
 
   return (
     <Page back={false}>
+      <h1 className="visually-hidden">{t('pageTitle')}</h1>
       <List>
         <Section header={t('features.header')} footer={t('features.footer')}>
           <AppLink href={routePaths.tonConnect}>
