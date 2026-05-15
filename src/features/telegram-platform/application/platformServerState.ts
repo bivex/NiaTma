@@ -26,15 +26,20 @@ export function mapPlatformServerStateDto(dto: PlatformServerStateDto): Platform
 }
 
 export async function fetchPlatformServerState(): Promise<PlatformServerState> {
-  const response = await fetch('/api/platform-demo', {
-    headers: { accept: 'application/json' },
-  });
+  let response: Response;
+  try {
+    response = await fetch('/api/platform-demo', {
+      headers: { accept: 'application/json' },
+    });
+  } catch (error) {
+    throw new ApiError(`Network error: ${error instanceof Error ? error.message : 'Request failed'}`);
+  }
 
   if (!response.ok) {
     throw new ApiError(`Unable to fetch platform server state: ${response.status}`, response.status);
   }
 
   const payload = (await response.json()) as PlatformServerStateDto;
-
   return mapPlatformServerStateDto(payload);
 }
+

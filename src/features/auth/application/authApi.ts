@@ -19,24 +19,36 @@ export class AuthError extends ApiError {
 }
 
 async function requestAuth<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
-  const response = await fetch(input, {
-    ...init,
-    cache: 'no-store',
-    credentials: 'same-origin',
-    headers: {
-      accept: 'application/json',
-      ...(init?.body ? { 'content-type': 'application/json' } : {}),
-      ...init?.headers,
-    },
-  });
-
-  const payload = (await response.json().catch(() => undefined)) as { message?: string } | undefined;
-
-  if (!response.ok) {
-    throw new AuthError(payload?.message || `Auth request failed: ${response.status}`, response.status);
+  let response: Response;
+  try {
+    response = await fetch(input, {
+      ...init,
+      cache: 'no-store',
+      credentials: 'same-origin',
+      headers: {
+        accept: 'application/json',
+        ...(init?.body ? { 'content-type': 'application/json' } : {}),
+        ...init?.headers,
+      },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Network request failed';
+    throw new AuthError(`Network error: ${message}`);
   }
 
-  return payload as T;
+  try {
+    const payload = (await response.json().catch(() => undefined)) as { message?: string } | undefined;
+
+    if (!response.ok) {
+      throw new AuthError(payload?.message || `Auth request failed: ${response.status}`, response.status);
+    }
+
+    return payload as T;
+  } catch (error) {
+    if (error instanceof AuthError) throw error;
+    const message = error instanceof Error ? error.message : 'Request failed';
+    throw new AuthError(message);
+  }
 }
 
 export const authApiService = {
