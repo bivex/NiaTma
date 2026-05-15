@@ -28,7 +28,7 @@ function TabBarLayout({ children }: PropsWithChildren) {
 
   return (
     <>
-      <div style={showTabBar ? { paddingBottom: 80 } : undefined}>
+      <div style={showTabBar ? { paddingBottom: 'calc(50px + env(safe-area-inset-bottom, 0px))' } : undefined}>
         {children}
       </div>
       {showTabBar && <BottomTabBar />}
