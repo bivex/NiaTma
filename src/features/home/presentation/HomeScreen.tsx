@@ -1,5 +1,6 @@
 'use client';
 
+import { type FC, type CSSProperties } from 'react';
 import { Cell, Image, List, Section, Text } from '@telegram-apps/telegram-ui';
 import { useTranslations } from 'next-intl';
 
@@ -13,12 +14,68 @@ import tonSvg from '@/app/_assets/ton.svg';
 
 import './HomeScreen.css';
 
+const tonBadgeStyle: CSSProperties = {
+  width: 36,
+  height: 36,
+  borderRadius: '100px',
+  background: 'linear-gradient(135deg, #3390ec 0%, #007aff 100%)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+};
+
+/* ── helper: builds a position name cell ─────────────────────────────────── */
+
+const CellContent: FC<{ name: string; children?: React.ReactNode }> = ({
+  name,
+  children,
+}) => (
+  <div className="home-screen__cell-copy">
+    <span className="home-screen__cell-name">{name}</span>
+    {children}
+  </div>
+);
+
+/* ── helper: key/value row ───────────────────────────────────────────────── */
+
+const KeyValueRow: FC<{ name: string; value: string }> = ({ name, value }) => (
+  <div className="home-screen__row">
+    <span className="home-screen__row-name">{name}</span>
+    <span className="home-screen__row-value">{value}</span>
+  </div>
+);
+
+/* ── helper: left-icon cell (slot pattern) ───────────────────────────────── */
+
+const IconCell: FC<{ iconName: string; children: React.ReactNode }> = ({
+  iconName,
+  children,
+}) => (
+  <Cell
+    before={
+      <div className="home-screen__icon-slot" data-icon={iconName}>
+        {iconName === 'ton' && (
+          <Image
+            src={tonSvg.src}
+            alt=""
+            style={{ width: 20, height: 20 }}
+          />
+        )}
+      </div>
+    }
+  >
+    {children}
+  </Cell>
+);
+
 export function HomeScreen() {
   const t = useTranslations('home');
 
   return (
     <Page back={false}>
       <List>
+        {/* ── Core features ──────────────────────────────────────────────── */}
         <Section>
           <div className="home-screen__section-copy">
             <Text className="home-screen__section-title" weight="2">
@@ -28,73 +85,81 @@ export function HomeScreen() {
               {t('features.footer')}
             </Text>
           </div>
+
           <AppLink href={routePaths.tonConnect}>
             <Cell
               before={
-                <Image
-                  src={tonSvg.src}
-                  style={{ backgroundColor: '#007AFF' }}
-                  alt={t('features.tonConnect.imageAlt')}
-                />
+                <div className="home-screen__hero-badge">
+                  <Image
+                    src={tonSvg.src}
+                    alt={t('features.tonConnect.imageAlt')}
+                    style={{ width: 18, height: 18 }}
+                  />
+                </div>
               }
             >
-              <div className="home-screen__cell-copy">
-                <span className="home-screen__cell-title">
-                  {t('features.tonConnect.title')}
-                </span>
+              <CellContent name={t('features.tonConnect.title')}>
                 <span className="home-screen__cell-subtitle">
                   {t('features.tonConnect.subtitle')}
                 </span>
-              </div>
+              </CellContent>
             </Cell>
           </AppLink>
+
           <AppLink href={routePaths.auth}>
-            <Cell>
-              <div className="home-screen__cell-copy">
-                <span className="home-screen__cell-title">{t('features.auth.title')}</span>
-                <span className="home-screen__cell-subtitle">{t('features.auth.subtitle')}</span>
-              </div>
-            </Cell>
+            <IconCell iconName="auth">
+              <CellContent name={t('features.auth.title')}>
+                <span className="home-screen__cell-subtitle">
+                  {t('features.auth.subtitle')}
+                </span>
+              </CellContent>
+            </IconCell>
           </AppLink>
+
           <AppLink href={routePaths.profile}>
-            <Cell>
-              <div className="home-screen__cell-copy">
-                <span className="home-screen__cell-title">{t('features.profile.title')}</span>
-                <span className="home-screen__cell-subtitle">{t('features.profile.subtitle')}</span>
-              </div>
-            </Cell>
+            <IconCell iconName="profile">
+              <CellContent name={t('features.profile.title')}>
+                <span className="home-screen__cell-subtitle">
+                  {t('features.profile.subtitle')}
+                </span>
+              </CellContent>
+            </IconCell>
           </AppLink>
+
           {appConfig.features.monetization && (
             <AppLink href={routePaths.premium}>
-              <Cell>
-                <div className="home-screen__cell-copy">
-                  <span className="home-screen__cell-title">{t('features.premium.title')}</span>
-                  <span className="home-screen__cell-subtitle">{t('features.premium.subtitle')}</span>
-                </div>
-              </Cell>
+              <IconCell iconName="premium">
+                <CellContent name={t('features.premium.title')}>
+                  <span className="home-screen__cell-subtitle">
+                    {t('features.premium.subtitle')}
+                  </span>
+                </CellContent>
+              </IconCell>
             </AppLink>
           )}
+
           <AppLink href={routePaths.platform}>
-            <Cell>
-              <div className="home-screen__cell-copy">
-                <span className="home-screen__cell-title">{t('features.platform.title')}</span>
+            <IconCell iconName="platform">
+              <CellContent name={t('features.platform.title')}>
                 <span className="home-screen__cell-subtitle">
                   {t('features.platform.subtitle')}
                 </span>
-              </div>
-            </Cell>
+              </CellContent>
+            </IconCell>
           </AppLink>
+
           <AppLink href={routePaths.application}>
-            <Cell>
-              <div className="home-screen__cell-copy">
-                <span className="home-screen__cell-title">{t('features.application.title')}</span>
+            <IconCell iconName="app">
+              <CellContent name={t('features.application.title')}>
                 <span className="home-screen__cell-subtitle">
                   {t('features.application.subtitle')}
                 </span>
-              </div>
-            </Cell>
+              </CellContent>
+            </IconCell>
           </AppLink>
         </Section>
+
+        {/* ── Launch data ────────────────────────────────────────────────── */}
         <Section>
           <div className="home-screen__section-copy">
             <Text className="home-screen__section-title" weight="2">
@@ -104,43 +169,30 @@ export function HomeScreen() {
               {t('launchData.footer')}
             </Text>
           </div>
-          <AppLink href={routePaths.initData}>
-            <Cell>
-              <div className="home-screen__cell-copy">
-                <span className="home-screen__cell-title">
-                  {t('launchData.initData.title')}
-                </span>
-                <span className="home-screen__cell-subtitle">
-                  {t('launchData.initData.subtitle')}
-                </span>
-              </div>
-            </Cell>
-          </AppLink>
-          <AppLink href={routePaths.launchParams}>
-            <Cell>
-              <div className="home-screen__cell-copy">
-                <span className="home-screen__cell-title">
-                  {t('launchData.launchParams.title')}
-                </span>
-                <span className="home-screen__cell-subtitle">
-                  {t('launchData.launchParams.subtitle')}
-                </span>
-              </div>
-            </Cell>
-          </AppLink>
-          <AppLink href={routePaths.themeParams}>
-            <Cell>
-              <div className="home-screen__cell-copy">
-                <span className="home-screen__cell-title">
-                  {t('launchData.themeParams.title')}
-                </span>
-                <span className="home-screen__cell-subtitle">
-                  {t('launchData.themeParams.subtitle')}
-                </span>
-              </div>
-            </Cell>
-          </AppLink>
+
+          <div className="home-screen__row-list">
+            <AppLink href={routePaths.initData}>
+              <KeyValueRow
+                name={t('launchData.initData.title')}
+                value={t('launchData.initData.subtitle')}
+              />
+            </AppLink>
+            <AppLink href={routePaths.launchParams}>
+              <KeyValueRow
+                name={t('launchData.launchParams.title')}
+                value={t('launchData.launchParams.subtitle')}
+              />
+            </AppLink>
+            <AppLink href={routePaths.themeParams}>
+              <KeyValueRow
+                name={t('launchData.themeParams.title')}
+                value={t('launchData.themeParams.subtitle')}
+              />
+            </AppLink>
+          </div>
         </Section>
+
+        {/* ── Locale ──────────────────────────────────────────────────────── */}
         <Section>
           <div className="home-screen__section-copy">
             <Text className="home-screen__section-title" weight="2">
