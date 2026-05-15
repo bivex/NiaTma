@@ -1,4 +1,24 @@
 {
+  "navigation": {
+    "tabBar": {
+      "home": "Home",
+      "cases": "Cases",
+      "tools": "Tools",
+      "contact": "Contact"
+    }
+  },
+  "cases": {
+    "header": "Cases",
+    "description": "Your cases will appear here"
+  },
+  "tools": {
+    "header": "Tools",
+    "description": "Search and discover tools"
+  },
+  "contact": {
+    "header": "Contact",
+    "description": "Get in touch with us"
+  },
   "shared": {
     "displayData": {
       "open": "Open",
