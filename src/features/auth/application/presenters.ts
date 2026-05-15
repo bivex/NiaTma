@@ -1,7 +1,52 @@
-import type { AuthRow, AuthScreenModel, AuthScreenSnapshot } from '../domain/models';
+import type {
+  AuthScreenModel,
+  AuthScreenSnapshot,
+  AuthSessionStatus,
+} from '../domain/models';
+
+export interface AuthScreenSnapshotContext {
+  rawInitDataPresent: boolean;
+  isPending: boolean;
+  t: (key: string) => string;
+  formatTime: (date: number) => string;
+  initDataUserFirstName?: string;
+  initDataHref: string;
+  platformHref: string;
+  profileHref: string;
+  tonConnectHref: string;
+}
+
+export function toAuthScreenSnapshot(
+  status: AuthSessionStatus | undefined,
+  context: AuthScreenSnapshotContext,
+): AuthScreenSnapshot {
+  const session = status?.session;
+  const displayName = [session?.user.firstName, session?.user.lastName].filter(Boolean).join(' ') || undefined;
+
+  return {
+    rawInitDataPresent: context.rawInitDataPresent,
+    telegramAuthAvailable: status?.capabilities.telegramAuthAvailable ?? false,
+    sessionSigningConfigured: status?.capabilities.sessionSigningConfigured ?? false,
+    devLoginAvailable: status?.capabilities.devLoginAvailable ?? false,
+    sessionStatus: context.isPending ? context.t('status.loading') : status?.status || context.t('status.anonymous'),
+    sessionProvider: session?.provider,
+    sessionSubject: session?.sub,
+    sessionDisplayName: displayName || context.initDataUserFirstName,
+    sessionUsername: session?.user.username,
+    sessionWalletProvider: session?.wallet?.provider,
+    sessionWalletAddress: session?.wallet?.address,
+    sessionWalletChain: session?.wallet?.chain,
+    sessionIssuedAt: session ? context.formatTime(session.issuedAt) : undefined,
+    sessionExpiresAt: session ? context.formatTime(session.expiresAt) : undefined,
+    initDataHref: context.initDataHref,
+    platformHref: context.platformHref,
+    profileHref: context.profileHref,
+    tonConnectHref: context.tonConnectHref,
+  };
+}
 
 export function buildAuthScreenModel(snapshot: AuthScreenSnapshot): AuthScreenModel {
-  const sessionRows: AuthRow[] = [
+  const rows = [
     { field: 'sessionStatus', value: { kind: 'text', text: snapshot.sessionStatus } },
     { field: 'sessionProvider', value: { kind: 'text', text: snapshot.sessionProvider } },
     { field: 'sessionSubject', value: { kind: 'text', text: snapshot.sessionSubject } },
@@ -12,7 +57,7 @@ export function buildAuthScreenModel(snapshot: AuthScreenSnapshot): AuthScreenMo
     { field: 'sessionWalletChain', value: { kind: 'text', text: snapshot.sessionWalletChain } },
     { field: 'sessionIssuedAt', value: { kind: 'text', text: snapshot.sessionIssuedAt } },
     { field: 'sessionExpiresAt', value: { kind: 'text', text: snapshot.sessionExpiresAt } },
-  ];
+  ] as const;
 
   return {
     sections: [
@@ -33,7 +78,7 @@ export function buildAuthScreenModel(snapshot: AuthScreenSnapshot): AuthScreenMo
       },
       {
         id: 'session',
-        rows: sessionRows,
+        rows: rows.map((row) => ({ field: row.field, value: row.value })),
       },
       {
         id: 'links',

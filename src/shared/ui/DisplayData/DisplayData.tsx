@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import type { FC, ReactNode } from 'react';
 
 import { AppLink } from '@/features/navigation/presentation/AppLink';
-import type { DisplayDataRow } from '@/shared/domain/display-data';
+import type { DisplayDataRow, DisplayDataValue } from '@/shared/domain/display-data';
 import { bem } from '@/shared/lib/bem';
 import { RGB } from '@/shared/ui/RGB/RGB';
 
@@ -19,9 +19,27 @@ export interface DisplayDataProps {
   rows: DisplayDataRow[];
 }
 
-export const DisplayData: FC<DisplayDataProps> = ({ header, footer, rows }) => {
+const DisplayValue: FC<{ value: DisplayDataValue }> = ({ value }) => {
   const t = useTranslations('shared.displayData');
 
+  switch (value.kind) {
+    case 'link':
+      return (
+        <AppLink href={value.href || '#'}>
+          {value.label || t('open')}
+        </AppLink>
+      );
+    case 'boolean':
+      return value.checked ? t('yes') : t('no');
+    case 'color':
+      return <RGB color={value.color} />;
+    case 'text':
+    default:
+      return value.text === undefined ? <i>{t('empty')}</i> : value.text;
+  }
+};
+
+export const DisplayData: FC<DisplayDataProps> = ({ header, footer, rows }) => {
   return (
     <Section>
       {(header || footer) && (
@@ -30,40 +48,19 @@ export const DisplayData: FC<DisplayDataProps> = ({ header, footer, rows }) => {
           {footer && <div className={e('footer')}>{footer}</div>}
         </div>
       )}
-      {rows.map((item) => {
-        let valueNode: ReactNode;
-
-        switch (item.value.kind) {
-          case 'link':
-            valueNode = (
-              <AppLink href={item.value.href || '#'}>
-                {item.value.label || t('open')}
-              </AppLink>
-            );
-            break;
-          case 'boolean':
-            valueNode = item.value.checked ? t('yes') : t('no');
-            break;
-          case 'color':
-            valueNode = <RGB color={item.value.color} />;
-            break;
-          case 'text':
-          default:
-            valueNode = item.value.text === undefined ? <i>{t('empty')}</i> : item.value.text;
-        }
-
-        return (
-          <Cell
-            key={item.title}
-            className={e('line')}
-            subhead={item.title}
-            readOnly
-            multiline
-          >
-            <span className={e('line-value')}>{valueNode}</span>
-          </Cell>
-        );
-      })}
+      {rows.map((item) => (
+        <Cell
+          key={item.title}
+          className={e('line')}
+          subhead={item.title}
+          readOnly
+          multiline
+        >
+          <span className={e('line-value')}>
+            <DisplayValue value={item.value} />
+          </span>
+        </Cell>
+      ))}
     </Section>
   );
 };

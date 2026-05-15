@@ -21,6 +21,59 @@ export function toAuthUserProfile(session: AuthSession): AuthUserProfile {
   };
 }
 
+export interface ProfileScreenSnapshotContext {
+  authHref: string;
+  platformHref: string;
+  tonConnectHref: string;
+  formatTime: (date: number) => string;
+  t: (key: string) => string;
+}
+
+export function toProfileScreenSnapshot(
+  profile: AuthUserProfile | undefined,
+  context: ProfileScreenSnapshotContext,
+): ProfileScreenSnapshot {
+  if (!profile) {
+    return {
+      subject: context.t('status.loading'),
+      provider: context.t('status.loading'),
+      userId: context.t('status.loading'),
+      displayName: undefined,
+      username: undefined,
+      languageCode: undefined,
+      walletProvider: undefined,
+      walletAddress: undefined,
+      walletChain: undefined,
+      walletPublicKey: undefined,
+      walletLinkedAt: undefined,
+      issuedAt: context.t('status.loading'),
+      expiresAt: context.t('status.loading'),
+      authHref: context.authHref,
+      platformHref: context.platformHref,
+      tonConnectHref: context.tonConnectHref,
+    };
+  }
+
+  return {
+    subject: profile.subject,
+    provider: profile.provider,
+    userId: profile.userId,
+    displayName: profile.displayName,
+    username: profile.username,
+    languageCode: profile.languageCode,
+    walletProvider: profile.wallet?.provider,
+    walletAddress: profile.wallet?.address,
+    walletChain: profile.wallet?.chain,
+    walletPublicKey: profile.wallet?.publicKey,
+    walletLinkedAt: profile.wallet ? context.formatTime(profile.wallet.linkedAt) : undefined,
+    issuedAt: context.formatTime(profile.issuedAt),
+    expiresAt: context.formatTime(profile.expiresAt),
+    authHref: context.authHref,
+    platformHref: context.platformHref,
+    tonConnectHref: context.tonConnectHref,
+  };
+}
+
 export function buildProfileScreenModel(snapshot: ProfileScreenSnapshot): ProfileScreenModel {
   const sections: ProfileScreenModel['sections'] = [
     {
@@ -36,13 +89,15 @@ export function buildProfileScreenModel(snapshot: ProfileScreenSnapshot): Profil
     },
   ];
 
-  if (
-    snapshot.walletProvider ||
-    snapshot.walletAddress ||
-    snapshot.walletChain ||
-    snapshot.walletPublicKey ||
-    snapshot.walletLinkedAt
-  ) {
+  const hasWalletInfo = [
+    snapshot.walletProvider,
+    snapshot.walletAddress,
+    snapshot.walletChain,
+    snapshot.walletPublicKey,
+    snapshot.walletLinkedAt,
+  ].some(Boolean);
+
+  if (hasWalletInfo) {
     sections.push({
       id: 'wallet',
       rows: [
