@@ -36,10 +36,16 @@ function createTelegramHash(dataCheckString: string, botToken: string) {
 }
 
 function safeCompareHex(left: string, right: string) {
+  if (!left || !right) {
+    return false;
+  }
+
   const leftBuffer = Buffer.from(left, 'hex');
   const rightBuffer = Buffer.from(right, 'hex');
 
-  if (leftBuffer.length === 0 || leftBuffer.length !== rightBuffer.length) {
+  const hasLengthMatch = leftBuffer.length > 0 && leftBuffer.length === rightBuffer.length;
+
+  if (!hasLengthMatch) {
     return false;
   }
 

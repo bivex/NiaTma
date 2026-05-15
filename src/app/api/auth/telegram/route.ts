@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { createAuthConfig, canUseTelegramAuth } from '@/features/auth/infrastructure/server/config';
+import { createAuthConfig, getAuthCapabilities } from '@/features/auth/infrastructure/server/config';
 import {
   AUTH_SESSION_COOKIE_NAME,
   buildSessionCookieOptions,
@@ -15,7 +15,9 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   const config = createAuthConfig();
 
-  if (!canUseTelegramAuth(config) || !config.telegramBotToken || !config.sessionSecret) {
+  const capabilities = getAuthCapabilities(config);
+
+  if (!capabilities.telegramAuthAvailable || !config.telegramBotToken || !config.sessionSecret) {
     return NextResponse.json({ message: 'Telegram auth is not configured on the server.' }, { status: 503 });
   }
 

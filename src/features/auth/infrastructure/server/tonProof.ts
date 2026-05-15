@@ -21,6 +21,7 @@ import type { VerifyAuthTonProofInput } from '../../domain/models';
 const tonProofPrefix = Buffer.from('ton-proof-item-v2/');
 const tonConnectPrefix = Buffer.from('ton-connect');
 const zeroPublicKey = Buffer.alloc(32);
+const defaultWalletParams = { workchain: 0, publicKey: zeroPublicKey };
 
 type WalletParser = {
   codeHash: string;
@@ -43,35 +44,35 @@ function createWalletCodeHash(factory: () => { init: { code: Cell } }) {
 
 const walletParsers: WalletParser[] = [
   {
-    codeHash: createWalletCodeHash(() => WalletContractV1R1.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV1R1.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(32).loadBuffer(32) ?? zeroPublicKey,
   },
   {
-    codeHash: createWalletCodeHash(() => WalletContractV1R2.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV1R2.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(32).loadBuffer(32) ?? zeroPublicKey,
   },
   {
-    codeHash: createWalletCodeHash(() => WalletContractV1R3.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV1R3.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(32).loadBuffer(32) ?? zeroPublicKey,
   },
   {
-    codeHash: createWalletCodeHash(() => WalletContractV2R1.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV2R1.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(32).loadBuffer(32) ?? zeroPublicKey,
   },
   {
-    codeHash: createWalletCodeHash(() => WalletContractV2R2.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV2R2.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(32).loadBuffer(32) ?? zeroPublicKey,
   },
   {
-    codeHash: createWalletCodeHash(() => WalletContractV3R1.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV3R1.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(64).loadBuffer(32) ?? zeroPublicKey,
   },
   {
-    codeHash: createWalletCodeHash(() => WalletContractV3R2.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV3R2.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(64).loadBuffer(32) ?? zeroPublicKey,
   },
   {
-    codeHash: createWalletCodeHash(() => WalletContractV4.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV4.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(64).loadBuffer(32) ?? zeroPublicKey,
   },
   {
@@ -79,7 +80,7 @@ const walletParsers: WalletParser[] = [
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(113).loadBuffer(32) ?? zeroPublicKey,
   },
   {
-    codeHash: createWalletCodeHash(() => WalletContractV5R1.create({ workchain: 0, publicKey: zeroPublicKey })),
+    codeHash: createWalletCodeHash(() => WalletContractV5R1.create(defaultWalletParams)),
     readPublicKey: (stateInit) => stateInit.data?.beginParse().skip(65).loadBuffer(32) ?? zeroPublicKey,
   },
 ];

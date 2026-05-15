@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { createAuthConfig, canUseDevLogin } from '@/features/auth/infrastructure/server/config';
+import { createAuthConfig, getAuthCapabilities } from '@/features/auth/infrastructure/server/config';
 import {
   AUTH_SESSION_COOKIE_NAME,
   buildSessionCookieOptions,
@@ -14,7 +14,9 @@ export const dynamic = 'force-dynamic';
 export async function POST() {
   const config = createAuthConfig();
 
-  if (!canUseDevLogin(config) || !config.sessionSecret) {
+  const capabilities = getAuthCapabilities(config);
+
+  if (!capabilities.devLoginAvailable || !config.sessionSecret) {
     return NextResponse.json({ message: 'Local preview login is disabled.' }, { status: 403 });
   }
 

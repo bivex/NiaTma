@@ -1,21 +1,13 @@
 import { cookies } from 'next/headers';
 
 import type { AuthCapabilities, AuthSession, AuthSessionStatus } from '../../domain/models';
-import { canSignSessions, canUseDevLogin, canUseTelegramAuth, type AuthConfig } from './config';
+import { getAuthCapabilities, type AuthConfig } from './config';
 import { AUTH_SESSION_COOKIE_NAME, decodeAuthSession } from './session';
-
-export function buildAuthCapabilities(config: AuthConfig): AuthCapabilities {
-  return {
-    telegramAuthAvailable: canUseTelegramAuth(config),
-    sessionSigningConfigured: canSignSessions(config),
-    devLoginAvailable: canUseDevLogin(config),
-  };
-}
 
 export function createAnonymousAuthStatus(config: AuthConfig): AuthSessionStatus {
   return {
     status: 'anonymous',
-    capabilities: buildAuthCapabilities(config),
+    capabilities: getAuthCapabilities(config),
   };
 }
 
@@ -25,7 +17,7 @@ export function createAuthenticatedAuthStatus(
 ): AuthSessionStatus {
   return {
     status: 'authenticated',
-    capabilities: buildAuthCapabilities(config),
+    capabilities: getAuthCapabilities(config),
     session,
   };
 }

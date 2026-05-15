@@ -1,3 +1,5 @@
+import { ApiError } from '@/shared/lib/errors';
+
 export interface PlatformServerStateDto {
   appName: string;
   serverTime: string;
@@ -29,7 +31,7 @@ export async function fetchPlatformServerState(): Promise<PlatformServerState> {
   });
 
   if (!response.ok) {
-    throw new Error(`Unable to fetch platform server state: ${response.status}`);
+    throw new ApiError(`Unable to fetch platform server state: ${response.status}`, response.status);
   }
 
   const payload = (await response.json()) as PlatformServerStateDto;
