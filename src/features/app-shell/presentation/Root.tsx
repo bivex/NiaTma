@@ -1,7 +1,7 @@
 'use client';
 
 import { type PropsWithChildren } from 'react';
-import { AppRoot, Placeholder } from '@telegram-apps/telegram-ui';
+import { AppRoot } from '@telegram-apps/telegram-ui';
 import { usePathname } from 'next/navigation';
 
 import { BottomTabBar } from '@/features/app-shell/presentation/BottomTabBar';
@@ -36,10 +36,35 @@ function TabBarLayout({ children }: PropsWithChildren) {
   );
 }
 
+function SsrShell() {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        color: 'var(--tg-theme-text-color, #111)',
+        background: 'var(--tg-theme-secondary-bg-color, #fff)',
+      }}
+    >
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>NiaTma</div>
+        <div style={{ fontSize: 14, opacity: 0.6 }}>Loading...</div>
+      </div>
+    </div>
+  );
+}
+
 export function Root(props: PropsWithChildren) {
   const didMount = useDidMount();
 
-  return didMount ? (
+  if (!didMount) {
+    return <SsrShell />;
+  }
+
+  return (
     <ErrorBoundary fallback={ErrorPage}>
       <QueryProvider>
         <RootInner>
@@ -47,7 +72,5 @@ export function Root(props: PropsWithChildren) {
         </RootInner>
       </QueryProvider>
     </ErrorBoundary>
-  ) : (
-    <Placeholder header="Loading" />
   );
 }
