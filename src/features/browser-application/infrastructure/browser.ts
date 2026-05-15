@@ -34,6 +34,19 @@ const getDisplayMode = () => {
   return 'browser';
 };
 
+const wrapIdbRequest = <T>(
+  request: IDBRequest<T>,
+): Promise<T> =>
+  new Promise<T>((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+
+const awaitTransactionComplete = (transaction: IDBTransaction, database: IDBDatabase): Promise<void> =>
+  new Promise<void>((resolve) => {
+    transaction.oncomplete = () => { database.close(); resolve(); };
+  });
+
 const openIndexedDb = () =>
   new Promise<IDBDatabase>((resolve, reject) => {
     const request = indexedDB.open(INDEXED_DB_NAME, 1);
@@ -51,15 +64,11 @@ const hasIndexedDbDemo = async () => {
   if (!hasWindowFeature('indexedDB')) return false;
   try {
     const database = await openIndexedDb();
-    const result = await new Promise<boolean>((resolve, reject) => {
-      const transaction = database.transaction(INDEXED_DB_STORE, 'readonly');
-      const store = transaction.objectStore(INDEXED_DB_STORE);
-      const request = store.get(INDEXED_DB_KEY);
-      request.onsuccess = () => resolve(request.result !== undefined);
-      request.onerror = () => reject(request.error);
-      transaction.oncomplete = () => database.close();
-    });
-    return result;
+    const transaction = database.transaction(INDEXED_DB_STORE, 'readonly');
+    const request = transaction.objectStore(INDEXED_DB_STORE).get(INDEXED_DB_KEY);
+    const record = await wrapIdbRequest(request);
+    database.close();
+    return record !== undefined;
   } catch {
     return false;
   }
@@ -68,32 +77,21 @@ const hasIndexedDbDemo = async () => {
 const writeIndexedDbDemo = async () => {
   if (!hasWindowFeature('indexedDB')) return;
   const database = await openIndexedDb();
-  await new Promise<void>((resolve, reject) => {
-    const transaction = database.transaction(INDEXED_DB_STORE, 'readwrite');
-    transaction.objectStore(INDEXED_DB_STORE).put(
-      { createdAt: new Date().toISOString(), source: 'application-screen' },
-      INDEXED_DB_KEY,
-    );
-    transaction.oncomplete = () => {
-      database.close();
-      resolve();
-    };
-    transaction.onerror = () => reject(transaction.error);
-  });
+  const transaction = database.transaction(INDEXED_DB_STORE, 'readwrite');
+  const request = transaction
+    .objectStore(INDEXED_DB_STORE)
+    .put({ createdAt: new Date().toISOString(), source: 'application-screen' }, INDEXED_DB_KEY);
+  await wrapIdbRequest(request);
+  await awaitTransactionComplete(transaction, database);
 };
 
 const clearIndexedDbDemo = async () => {
   if (!hasWindowFeature('indexedDB')) return;
   const database = await openIndexedDb();
-  await new Promise<void>((resolve, reject) => {
-    const transaction = database.transaction(INDEXED_DB_STORE, 'readwrite');
-    transaction.objectStore(INDEXED_DB_STORE).delete(INDEXED_DB_KEY);
-    transaction.oncomplete = () => {
-      database.close();
-      resolve();
-    };
-    transaction.onerror = () => reject(transaction.error);
-  });
+  const transaction = database.transaction(INDEXED_DB_STORE, 'readwrite');
+  const request = transaction.objectStore(INDEXED_DB_STORE).delete(INDEXED_DB_KEY);
+  await wrapIdbRequest(request);
+  await awaitTransactionComplete(transaction, database);
 };
 
 const getApplicationServiceWorkerRegistration = async () => {
