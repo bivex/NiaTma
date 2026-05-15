@@ -13,13 +13,13 @@ describe('appConfig', () => {
     expect(config.features.telegramMainButton).toBe(true);
   });
 
-  test('parses boolean feature flags from env', () => {
+  test('parses boolean feature flags from env (text)', () => {
     const config = createAppConfig({
       NODE_ENV: 'development',
       NEXT_PUBLIC_APP_NAME: 'Example',
       NEXT_PUBLIC_ENABLE_MONETIZATION: 'false',
       NEXT_PUBLIC_ENABLE_PLATFORM_DEMO: 'false',
-      NEXT_PUBLIC_ENABLE_SWIPE_BACK_NAVIGATION: '0',
+      NEXT_PUBLIC_ENABLE_SWIPE_BACK_NAVIGATION: 'off',
       NEXT_PUBLIC_ENABLE_TELEGRAM_HAPTICS: 'yes',
     });
 
@@ -29,5 +29,14 @@ describe('appConfig', () => {
     expect(config.features.platformDemo).toBe(false);
     expect(config.features.swipeBackNavigation).toBe(false);
     expect(config.features.telegramHaptics).toBe(true);
+  });
+
+  test('parses boolean feature flags from env (numeric)', () => {
+    const config = createAppConfig({
+      NODE_ENV: 'development',
+      NEXT_PUBLIC_ENABLE_SWIPE_BACK_NAVIGATION: '0',
+    });
+
+    expect(config.features.swipeBackNavigation).toBe(false);
   });
 });

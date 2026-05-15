@@ -2,6 +2,15 @@ import { describe, expect, test } from 'bun:test';
 
 import { createAuthSession, decodeAuthSession, encodeAuthSession } from './session';
 
+function encodeAndDecode(
+  session: ReturnType<typeof createAuthSession>,
+  secret: string,
+  ttlSeconds: number,
+) {
+  const token = encodeAuthSession(session, secret);
+  return decodeAuthSession(token, secret, ttlSeconds);
+}
+
 describe('auth session token', () => {
   test('encodes and decodes a valid session', () => {
     const session = createAuthSession({
@@ -18,9 +27,7 @@ describe('auth session token', () => {
       linkedAt: 1_100,
     };
 
-    const token = encodeAuthSession(session, 'secret');
-
-    expect(decodeAuthSession(token, 'secret', 1_500)).toEqual({ valid: true, session });
+    expect(encodeAndDecode(session, 'secret', 1_500)).toEqual({ valid: true, session });
   });
 
   test('rejects tampered sessions', () => {
