@@ -9,20 +9,3 @@
 .ton-connect-page__button-connected {
   margin: 16px 16px 0;
 }
-
-.ton-connect-page__actions {
-  display: grid;
-  gap: 8px;
-  padding: 16px;
-}
-
-.ton-connect-page__button-link {
-  background-color: #0057b8;
-  color: #ffffff;
-}
-
-.ton-connect-page__notice {
-  margin: 8px 16px 0;
-  color: var(--tg-theme-text-color, #11181c);
-  opacity: 0.92;
-}

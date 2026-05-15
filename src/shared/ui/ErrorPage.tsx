@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Button, Placeholder } from '@telegram-apps/telegram-ui';
 
 export function ErrorPage({
   error,
@@ -14,12 +15,11 @@ export function ErrorPage({
   }, [error]);
 
   return (
-    <div>
-      <h2>An unhandled error occurred!</h2>
-      <blockquote>
-        <code>{error.message}</code>
-      </blockquote>
-      {reset && <button onClick={() => reset()}>Try again</button>}
-    </div>
+    <Placeholder
+      header="Something went wrong"
+      description={error.message}
+    >
+      {reset && <Button mode="outline" onClick={() => reset()}>Try again</Button>}
+    </Placeholder>
   );
 }

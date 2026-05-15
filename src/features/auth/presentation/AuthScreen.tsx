@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { initData, useRawInitData, useSignal } from '@tma.js/sdk-react';
-import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
+import { Button, List, Section, Subheadline } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -17,8 +17,6 @@ import { buildAuthScreenModel, toAuthScreenSnapshot } from '../application/prese
 import { routePaths } from '@/features/navigation/domain/routes';
 import { Page } from '@/features/navigation/presentation/Page';
 import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
-
-import './AuthScreen.css';
 
 export function AuthScreen() {
   const t = useTranslations('auth');
@@ -155,68 +153,62 @@ export function AuthScreen() {
   return (
     <Page swipeBack>
       <List>
-        <Section>
-          <div className="auth-screen__copy">
-            <Text className="auth-screen__title" weight="2">
-              {t('intro.header')}
-            </Text>
-            <Text className="auth-screen__description">{t('intro.description')}</Text>
-            {notice && <Text className="auth-screen__notice">{notice}</Text>}
-          </div>
-          <div className="auth-screen__actions">
-            <Button
-              className="auth-screen__button-primary"
-              stretched
-              loading={telegramMutation.isPending}
-              disabled={!rawInitData || !(sessionData?.capabilities.telegramAuthAvailable ?? false)}
-              onClick={() => {
-                void telegramMutation.mutateAsync();
-              }}
-            >
-              {t('actions.telegramSignIn')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={devLoginMutation.isPending}
-              disabled={!(sessionData?.capabilities.devLoginAvailable ?? false)}
-              onClick={() => {
-                void devLoginMutation.mutateAsync();
-              }}
-            >
-              {t('actions.devSignIn')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              onClick={() => {
-                router.push(tonConnectHref);
-              }}
-            >
-              {t('actions.walletSignIn')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={sessionFetching}
-              onClick={() => {
-                void refetchSessionStatus();
-              }}
-            >
-              {t('actions.refreshSession')}
-            </Button>
-            <Button
-              stretched
-              mode="gray"
-              loading={logoutMutation.isPending}
-              disabled={isBusy || sessionData?.status !== 'authenticated'}
-              onClick={() => {
-                void logoutMutation.mutateAsync();
-              }}
-            >
-              {t('actions.logout')}
-            </Button>
-          </div>
+        <Section
+          header={t('intro.header')}
+          footer={notice || t('intro.description')}
+        >
+          <Button
+            stretched
+            mode="filled"
+            loading={telegramMutation.isPending}
+            disabled={!rawInitData || !(sessionData?.capabilities.telegramAuthAvailable ?? false)}
+            onClick={() => {
+              void telegramMutation.mutateAsync();
+            }}
+          >
+            {t('actions.telegramSignIn')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={devLoginMutation.isPending}
+            disabled={!(sessionData?.capabilities.devLoginAvailable ?? false)}
+            onClick={() => {
+              void devLoginMutation.mutateAsync();
+            }}
+          >
+            {t('actions.devSignIn')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            onClick={() => {
+              router.push(tonConnectHref);
+            }}
+          >
+            {t('actions.walletSignIn')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={sessionFetching}
+            onClick={() => {
+              void refetchSessionStatus();
+            }}
+          >
+            {t('actions.refreshSession')}
+          </Button>
+          <Button
+            stretched
+            mode="gray"
+            loading={logoutMutation.isPending}
+            disabled={isBusy || sessionData?.status !== 'authenticated'}
+            onClick={() => {
+              void logoutMutation.mutateAsync();
+            }}
+          >
+            {t('actions.logout')}
+          </Button>
         </Section>
 
         {screen.sections.map((section) => (

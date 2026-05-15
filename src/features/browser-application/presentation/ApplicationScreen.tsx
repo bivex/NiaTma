@@ -1,13 +1,11 @@
 'use client';
 
-import { Button, List, Placeholder, Section, Text } from '@telegram-apps/telegram-ui';
+import { Button, List, Placeholder, Section } from '@telegram-apps/telegram-ui';
 import { useTranslations } from 'next-intl';
 
 import { useBrowserApplication } from '../application/useBrowserApplication';
 import { Page } from '@/features/navigation/presentation/Page';
 import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
-
-import './ApplicationScreen.css';
 
 export function ApplicationScreen() {
   const t = useTranslations('application');
@@ -37,85 +35,75 @@ export function ApplicationScreen() {
   return (
     <Page>
       <List>
-        <Section>
-          <div className="application-screen__copy">
-            <Text className="application-screen__title" weight="2">
-              {t('intro.header')}
-            </Text>
-            <Text className="application-screen__description">{t('intro.description')}</Text>
-            {noticeId !== 'idle' && (
-              <Text className="application-screen__notice">{t(`messages.${noticeId}`)}</Text>
-            )}
-          </div>
-          <div className="application-screen__actions">
-            <Button
-              className="application-screen__button-primary"
-              stretched
-              loading={pendingAction === 'registerServiceWorker'}
-              onClick={() => void registerServiceWorker()}
-            >
-              {t('actions.registerServiceWorker')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={pendingAction === 'unregisterServiceWorker'}
-              onClick={() => void unregisterServiceWorker()}
-            >
-              {t('actions.unregisterServiceWorker')}
-            </Button>
-            <Button
-              className="application-screen__button-neutral"
-              stretched
-              mode="gray"
-              loading={pendingAction === 'seedDemoData'}
-              onClick={() => void seedDemoData()}
-            >
-              {t('actions.seedDemoData')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={pendingAction === 'clearDemoData'}
-              onClick={() => void clearDemoData()}
-            >
-              {t('actions.clearDemoData')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={pendingAction === 'requestPersistence'}
-              onClick={() => void requestPersistence()}
-            >
-              {t('actions.requestPersistence')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={pendingAction === 'requestNotifications'}
-              onClick={() => void requestNotifications()}
-            >
-              {t('actions.requestNotifications')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              disabled={!snapshot?.serviceWorkerRegistered || !snapshot.backgroundSyncSupported}
-              loading={pendingAction === 'registerBackgroundSync'}
-              onClick={() => void registerBackgroundSync()}
-            >
-              {t('actions.registerBackgroundSync')}
-            </Button>
-            <Button
-              className="application-screen__button-neutral"
-              stretched
-              mode="gray"
-              loading={pendingAction === 'refresh'}
-              onClick={() => void refresh()}
-            >
-              {t('actions.refresh')}
-            </Button>
-          </div>
+        <Section
+          header={t('intro.header')}
+          footer={noticeId !== 'idle' ? t(`messages.${noticeId}`) : t('intro.description')}
+        >
+          <Button
+            stretched
+            mode="filled"
+            loading={pendingAction === 'registerServiceWorker'}
+            onClick={() => void registerServiceWorker()}
+          >
+            {t('actions.registerServiceWorker')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={pendingAction === 'unregisterServiceWorker'}
+            onClick={() => void unregisterServiceWorker()}
+          >
+            {t('actions.unregisterServiceWorker')}
+          </Button>
+          <Button
+            stretched
+            mode="gray"
+            loading={pendingAction === 'seedDemoData'}
+            onClick={() => void seedDemoData()}
+          >
+            {t('actions.seedDemoData')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={pendingAction === 'clearDemoData'}
+            onClick={() => void clearDemoData()}
+          >
+            {t('actions.clearDemoData')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={pendingAction === 'requestPersistence'}
+            onClick={() => void requestPersistence()}
+          >
+            {t('actions.requestPersistence')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={pendingAction === 'requestNotifications'}
+            onClick={() => void requestNotifications()}
+          >
+            {t('actions.requestNotifications')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            disabled={!snapshot?.serviceWorkerRegistered || !snapshot.backgroundSyncSupported}
+            loading={pendingAction === 'registerBackgroundSync'}
+            onClick={() => void registerBackgroundSync()}
+          >
+            {t('actions.registerBackgroundSync')}
+          </Button>
+          <Button
+            stretched
+            mode="gray"
+            loading={pendingAction === 'refresh'}
+            onClick={() => void refresh()}
+          >
+            {t('actions.refresh')}
+          </Button>
         </Section>
 
         {screen.sections.map((section) => (

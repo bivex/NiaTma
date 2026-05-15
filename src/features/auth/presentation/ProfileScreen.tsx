@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
+import { Button, List, Section } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo } from 'react';
 
@@ -12,8 +12,6 @@ import type { AuthUserProfile } from '../domain/models';
 import { routePaths } from '@/features/navigation/domain/routes';
 import { Page } from '@/features/navigation/presentation/Page';
 import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
-
-import './ProfileScreen.css';
 
 export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserProfile }) {
   const t = useTranslations('profile');
@@ -67,28 +65,20 @@ export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserPro
   return (
     <Page swipeBack>
       <List>
-        <Section>
-          <div className="profile-screen__copy">
-            <Text className="profile-screen__title" weight="2">
-              {t('intro.header')}
-            </Text>
-            <Text className="profile-screen__description">{t('intro.description')}</Text>
-            {profileQuery.error && (
-              <Text className="profile-screen__notice">{t('messages.loadError')}</Text>
-            )}
-          </div>
-          <div className="profile-screen__actions">
-            <Button
-              stretched
-              mode="outline"
-              loading={isProfileFetching}
-              onClick={() => {
-                void refetchProfile();
-              }}
-            >
-              {t('actions.refresh')}
-            </Button>
-          </div>
+        <Section
+          header={t('intro.header')}
+          footer={profileQuery.error ? t('messages.loadError') : t('intro.description')}
+        >
+          <Button
+            stretched
+            mode="outline"
+            loading={isProfileFetching}
+            onClick={() => {
+              void refetchProfile();
+            }}
+          >
+            {t('actions.refresh')}
+          </Button>
         </Section>
 
         {screen.sections.map((section) => (

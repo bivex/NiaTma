@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
+import { Button, List, Section } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
@@ -8,8 +8,6 @@ import { useMemo } from 'react';
 import type { WalletPremiumAccess } from '../application/premium';
 import { Page } from '@/features/navigation/presentation/Page';
 import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
-
-import './PremiumScreen.css';
 
 export function PremiumScreen(props: {
   access: WalletPremiumAccess;
@@ -36,24 +34,19 @@ export function PremiumScreen(props: {
   return (
     <Page swipeBack>
       <List>
-        <Section>
-          <div className="premium-screen__copy">
-            <Text className="premium-screen__title" weight="2">
-              {props.access.active ? t('intro.unlockedHeader') : t('intro.header')}
-            </Text>
-            <Text className="premium-screen__description">
-              {props.access.active ? t('intro.unlockedDescription') : t(`reasons.${props.access.reason}`)}
-            </Text>
-          </div>
+        <Section
+          header={props.access.active ? t('intro.unlockedHeader') : t('intro.header')}
+          footer={props.access.active ? t('intro.unlockedDescription') : t(`reasons.${props.access.reason}`)}
+        >
           {!props.access.active && props.access.enabled && (
-            <div className="premium-screen__actions">
+            <>
               <Button stretched onClick={() => router.push(props.tonConnectHref)}>
                 {t('actions.openTonConnect')}
               </Button>
               <Button stretched mode="outline" onClick={() => router.push(props.authHref)}>
                 {t('actions.openAuth')}
               </Button>
-            </div>
+            </>
           )}
         </Section>
 
@@ -69,14 +62,7 @@ export function PremiumScreen(props: {
                 { title: t('fields.grantedAt'), value: { kind: 'text', text: grantedAt } },
               ]}
             />
-            <Section>
-              <div className="premium-screen__copy">
-                <Text className="premium-screen__title" weight="2">
-                  {t('content.header')}
-                </Text>
-                <Text className="premium-screen__description">{t('content.body')}</Text>
-              </div>
-            </Section>
+            <Section header={t('content.header')} footer={t('content.body')} />
           </>
         )}
       </List>

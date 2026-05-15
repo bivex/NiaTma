@@ -6,12 +6,7 @@ import type { FC, ReactNode } from 'react';
 
 import { AppLink } from '@/features/navigation/presentation/AppLink';
 import type { DisplayDataRow, DisplayDataValue } from '@/shared/domain/display-data';
-import { bem } from '@/shared/lib/bem';
 import { RGB } from '@/shared/ui/RGB/RGB';
-
-import './DisplayData.css';
-
-const [, e] = bem('display-data');
 
 export interface DisplayDataProps {
   header?: ReactNode;
@@ -46,24 +41,15 @@ const DisplayValue: FC<{ value: DisplayDataValue }> = ({ value }) => {
 
 export const DisplayData: FC<DisplayDataProps> = ({ header, footer, rows }) => {
   return (
-    <Section>
-      {(header || footer) && (
-        <div className={e('meta')}>
-          {header && <div className={e('header')}>{header}</div>}
-          {footer && <div className={e('footer')}>{footer}</div>}
-        </div>
-      )}
+    <Section header={header} footer={footer}>
       {rows.map((item) => (
         <Cell
           key={item.title}
-          className={e('line')}
           subhead={item.title}
           readOnly
           multiline
         >
-          <span className={e('line-value')}>
-            <DisplayValue value={item.value} />
-          </span>
+          <DisplayValue value={item.value} />
         </Cell>
       ))}
     </Section>

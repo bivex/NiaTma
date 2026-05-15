@@ -10,6 +10,7 @@ import {
   Navigation,
   Placeholder,
   Section,
+  Subheadline,
   Text,
   Title,
 } from '@telegram-apps/telegram-ui';
@@ -201,10 +202,10 @@ function TonConnectScreenContent() {
             </>
           )}
 
-          {notice && <Text className={e('notice')}>{notice}</Text>}
+          {notice && <Subheadline>{notice}</Subheadline>}
 
           {sessionQuery.data?.session?.provider === 'ton' && (
-            <Text className={e('notice')}>
+            <Subheadline>
               {t('linking.walletFirstActive')}
               {hasPremiumAccess && (
                 <>
@@ -212,41 +213,39 @@ function TonConnectScreenContent() {
                   <AppLink href={routePaths.premium}>{t('linking.premiumLink')}</AppLink>
                 </>
               )}
-            </Text>
+            </Subheadline>
           )}
 
-          <div className={e('actions')}>
-            <Button
-              stretched
-              className={e('button-link')}
-              loading={linkMutation.isPending}
-              disabled={isBusy || !walletPayload || !isAuthenticated}
-              onClick={() => {
-                if (walletPayload) {
-                  void linkMutation.mutateAsync(walletPayload);
-                }
-              }}
-            >
-              {matchesLinkedWallet ? t('actions.relinkWallet') : t('actions.linkWallet')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={unlinkMutation.isPending}
-              disabled={isBusy || !linkedWallet || !isAuthenticated}
-              onClick={() => {
-                void unlinkMutation.mutateAsync();
-              }}
-            >
-              {t('actions.unlinkWallet')}
-            </Button>
-          </div>
+          <Button
+            stretched
+            mode="filled"
+            loading={linkMutation.isPending}
+            disabled={isBusy || !walletPayload || !isAuthenticated}
+            onClick={() => {
+              if (walletPayload) {
+                void linkMutation.mutateAsync(walletPayload);
+              }
+            }}
+          >
+            {matchesLinkedWallet ? t('actions.relinkWallet') : t('actions.linkWallet')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={unlinkMutation.isPending}
+            disabled={isBusy || !linkedWallet || !isAuthenticated}
+            onClick={() => {
+              void unlinkMutation.mutateAsync();
+            }}
+          >
+            {t('actions.unlinkWallet')}
+          </Button>
 
           {!isAuthenticated && (
-            <Text className={e('notice')}>
+            <Subheadline>
               {t('linking.signInPrompt')}{' '}
               <AppLink href={routePaths.auth}>{t('linking.signInLink')}</AppLink>
-            </Text>
+            </Subheadline>
           )}
         </Section>
 

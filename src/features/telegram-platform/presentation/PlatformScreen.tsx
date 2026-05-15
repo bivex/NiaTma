@@ -2,7 +2,7 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { mainButton, miniApp, swipeBehavior, useLaunchParams, useSignal } from '@tma.js/sdk-react';
-import { Button, List, Section, Text } from '@telegram-apps/telegram-ui';
+import { Button, List, Section } from '@telegram-apps/telegram-ui';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo } from 'react';
 
@@ -19,8 +19,6 @@ import { Page } from '@/features/navigation/presentation/Page';
 import { appConfig } from '@/shared/config/appConfig';
 import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
 import { ScreenSkeleton } from '@/shared/ui/ScreenSkeleton/ScreenSkeleton';
-
-import './PlatformScreen.css';
 
 export function PlatformScreen() {
   const t = useTranslations('platform');
@@ -166,92 +164,84 @@ export function PlatformScreen() {
       allowVerticalSwipe={allowVerticalSwipe}
     >
       <List>
-        <Section>
-          <div className="platform-screen__copy">
-            <Text className="platform-screen__title" weight="2">
-              {t('intro.header')}
-            </Text>
-            <Text className="platform-screen__description">{t('intro.description')}</Text>
-            {noticeId !== 'idle' && (
-              <Text className="platform-screen__notice">{t(`messages.${noticeId}`)}</Text>
-            )}
-          </div>
-          <div className="platform-screen__actions">
-            <Button
-              className="platform-screen__button-primary"
-              stretched
-              onClick={() => {
-                setNotice(haptics.impact('medium') ? 'impact' : 'unsupported');
-              }}
-            >
-              {t('actions.impactHaptic')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              onClick={() => {
-                setNotice(haptics.notify('success') ? 'success' : 'unsupported');
-              }}
-            >
-              {t('actions.successHaptic')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              onClick={() => {
-                setNotice(haptics.select() ? 'selection' : 'unsupported');
-              }}
-            >
-              {t('actions.selectionHaptic')}
-            </Button>
-            <Button
-              stretched
-              mode="gray"
-              onClick={() => {
-                showSkeletonPreview();
-              }}
-            >
-              {t('actions.showSkeleton')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={isServerFetching}
-              onClick={() => {
-                void refetchServerState();
-              }}
-            >
-              {t('actions.refetchServerState')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              loading={isServerFetching}
-              onClick={() => {
-                void queryClient.invalidateQueries({ queryKey: platformServerStateQueryKey });
-              }}
-            >
-              {t('actions.invalidateServerState')}
-            </Button>
-            <Button
-              stretched
-              mode="outline"
-              onClick={() => {
-                if (!verticalSwipeSupported) {
-                  showUnsupported();
-                  return;
-                }
+        <Section
+          header={t('intro.header')}
+          footer={noticeId !== 'idle' ? t(`messages.${noticeId}`) : t('intro.description')}
+        >
+          <Button
+            stretched
+            mode="filled"
+            onClick={() => {
+              setNotice(haptics.impact('medium') ? 'impact' : 'unsupported');
+            }}
+          >
+            {t('actions.impactHaptic')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            onClick={() => {
+              setNotice(haptics.notify('success') ? 'success' : 'unsupported');
+            }}
+          >
+            {t('actions.successHaptic')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            onClick={() => {
+              setNotice(haptics.select() ? 'selection' : 'unsupported');
+            }}
+          >
+            {t('actions.selectionHaptic')}
+          </Button>
+          <Button
+            stretched
+            mode="gray"
+            onClick={() => {
+              showSkeletonPreview();
+            }}
+          >
+            {t('actions.showSkeleton')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={isServerFetching}
+            onClick={() => {
+              void refetchServerState();
+            }}
+          >
+            {t('actions.refetchServerState')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            loading={isServerFetching}
+            onClick={() => {
+              void queryClient.invalidateQueries({ queryKey: platformServerStateQueryKey });
+            }}
+          >
+            {t('actions.invalidateServerState')}
+          </Button>
+          <Button
+            stretched
+            mode="outline"
+            onClick={() => {
+              if (!verticalSwipeSupported) {
+                showUnsupported();
+                return;
+              }
 
-                const next = !allowVerticalSwipe;
-                toggleAllowVerticalSwipe();
-                setNotice(next ? 'verticalSwipeEnabled' : 'verticalSwipeDisabled');
-              }}
-            >
-              {allowVerticalSwipe
-                ? t('actions.disableVerticalSwipe')
-                : t('actions.enableVerticalSwipe')}
-            </Button>
-          </div>
+              const next = !allowVerticalSwipe;
+              toggleAllowVerticalSwipe();
+              setNotice(next ? 'verticalSwipeEnabled' : 'verticalSwipeDisabled');
+            }}
+          >
+            {allowVerticalSwipe
+              ? t('actions.disableVerticalSwipe')
+              : t('actions.enableVerticalSwipe')}
+          </Button>
         </Section>
 
         {showSkeleton && (
