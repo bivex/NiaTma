@@ -21,19 +21,23 @@ function createUnauthorizedResponse(shouldClearCookie: boolean) {
   return response;
 }
 
-function createSessionResponse(
-  config: ReturnType<typeof createAuthConfig>,
-  session: NonNullable<Awaited<ReturnType<typeof readAuthenticatedAuthSession>>['session']>,
-) {
+function createSessionResponse(params: {
+  config: ReturnType<typeof createAuthConfig>;
+  session: NonNullable<Awaited<ReturnType<typeof readAuthenticatedAuthSession>>['session']>;
+}) {
+  const { config, session } = params;
+  const { sessionSecret, secureCookies } = config;
+  const { expiresAt } = session;
+
   const response = NextResponse.json(createAuthenticatedAuthStatus(config, session), {
     headers: { 'cache-control': 'no-store' },
   });
 
-  if (config.sessionSecret) {
+  if (sessionSecret) {
     response.cookies.set({
       name: AUTH_SESSION_COOKIE_NAME,
-      value: encodeAuthSession(session, config.sessionSecret),
-      ...buildSessionCookieOptions(session.expiresAt, config.secureCookies),
+      value: encodeAuthSession(session, sessionSecret),
+      ...buildSessionCookieOptions(expiresAt, secureCookies),
     });
   }
 
@@ -42,9 +46,11 @@ function createSessionResponse(
 
 export async function POST(request: Request) {
   const config = createAuthConfig();
-  const { session, shouldClearCookie } = await readAuthenticatedAuthSession(config);
+  const { sessionSecret } = config;
+  const auth = await readAuthenticatedAuthSession(config);
+  const { session, shouldClearCookie } = auth;
 
-  if (!session || !config.sessionSecret) {
+  if (!session || !sessionSecret) {
     return createUnauthorizedResponse(shouldClearCookie);
   }
 
@@ -54,22 +60,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Invalid TON wallet payload.' }, { status: 400 });
   }
 
-  return createSessionResponse(config, {
-    ...session,
-    wallet: createAuthLinkedWallet(payload),
+  return createSessionResponse({
+    config,
+    session: {
+      ...session,
+      wallet: createAuthLinkedWallet(payload),
+    },
   });
 }
 
 export async function DELETE() {
   const config = createAuthConfig();
-  const { session, shouldClearCookie } = await readAuthenticatedAuthSession(config);
+  const { sessionSecret } = config;
+  const auth = await readAuthenticatedAuthSession(config);
+  const { session, shouldClearCookie } = auth;
 
-  if (!session || !config.sessionSecret) {
+  if (!session || !sessionSecret) {
     return createUnauthorizedResponse(shouldClearCookie);
   }
 
-  return createSessionResponse(config, {
-    ...session,
-    wallet: undefined,
+  return createSessionResponse({
+    config,
+    session: {
+      ...session,
+      wallet: undefined,
+    },
   });
 }

@@ -39,8 +39,8 @@ function mapPrimitiveRow(title: string, value: unknown): DisplayDataRow {
 }
 
 function mapRecordRows(record: Record<string, unknown>): DisplayDataRow[] {
-  return Object.entries(record).reduce<DisplayDataRow[]>((acc, [title, value]) => {
-    acc.push(mapPrimitiveRow(title, value));
+  return Object.keys(record).reduce<DisplayDataRow[]>((acc, title) => {
+    acc.push(mapPrimitiveRow(title, record[title]));
     return acc;
   }, []);
 }
@@ -52,30 +52,34 @@ function formatThemeParamName(title: string) {
 export function buildInitDataScreenModel(
   snapshot: InitDataSnapshot,
 ): InitDataScreenModel {
-  if (!snapshot.raw || !snapshot.state) {
+  const { raw, state, user, receiver, chat } = snapshot;
+  if (!raw || !state) {
     return { status: 'missing' };
   }
 
+  const stateRows: DisplayDataRow[] = Object.keys(state).reduce<DisplayDataRow[]>((acc, title) => {
+    const value = state[title];
+    if (value instanceof Date || !value || typeof value !== 'object') {
+      acc.push(mapPrimitiveRow(title, value));
+    }
+    return acc;
+  }, []);
+
   const rootRows: DisplayDataRow[] = [
-    { title: 'raw', value: { kind: 'text', text: snapshot.raw } },
-    ...Object.entries(snapshot.state).reduce<DisplayDataRow[]>((acc, [title, value]) => {
-      if (value instanceof Date || !value || typeof value !== 'object') {
-        acc.push(mapPrimitiveRow(title, value));
-      }
-      return acc;
-    }, []),
+    { title: 'raw', value: { kind: 'text', text: raw } },
+    ...stateRows,
   ];
 
   const sections: DisplaySection[] = [{ id: 'initData', rows: rootRows }];
 
-  if (snapshot.user) {
-    sections.push({ id: 'user', rows: mapRecordRows(snapshot.user) });
+  if (user) {
+    sections.push({ id: 'user', rows: mapRecordRows(user) });
   }
-  if (snapshot.receiver) {
-    sections.push({ id: 'receiver', rows: mapRecordRows(snapshot.receiver) });
+  if (receiver) {
+    sections.push({ id: 'receiver', rows: mapRecordRows(receiver) });
   }
-  if (snapshot.chat) {
-    sections.push({ id: 'chat', rows: mapRecordRows(snapshot.chat) });
+  if (chat) {
+    sections.push({ id: 'chat', rows: mapRecordRows(chat) });
   }
 
   return { status: 'ready', sections };

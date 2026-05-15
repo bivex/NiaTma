@@ -42,10 +42,9 @@ function safeCompareHex(left: string, right: string) {
 
   const leftBuffer = Buffer.from(left, 'hex');
   const rightBuffer = Buffer.from(right, 'hex');
+  const { length } = leftBuffer;
 
-  const hasLengthMatch = leftBuffer.length > 0 && leftBuffer.length === rightBuffer.length;
-
-  if (!hasLengthMatch) {
+  if (!length || length !== rightBuffer.length) {
     return false;
   }
 
@@ -58,18 +57,24 @@ function parseTelegramUser(value: string | null): AuthSessionUser | undefined {
   }
 
   try {
-    const user = JSON.parse(value) as TelegramInitDataUserDto;
+    const {
+      id,
+      first_name: firstName,
+      last_name: lastName,
+      username,
+      language_code: languageCode,
+    } = JSON.parse(value) as TelegramInitDataUserDto;
 
-    if (user.id === undefined || user.id === null) {
+    if (id === undefined || id === null) {
       return undefined;
     }
 
     return {
-      id: String(user.id),
-      firstName: user.first_name,
-      lastName: user.last_name,
-      username: user.username,
-      languageCode: user.language_code,
+      id: String(id),
+      firstName,
+      lastName,
+      username,
+      languageCode,
     };
   } catch {
     return undefined;

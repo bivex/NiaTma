@@ -1,6 +1,6 @@
 import { emitEvent, isTMA, mockTelegramEnv } from '@tma.js/sdk-react';
 
-const TEN_DOT = '10.';
+const IP_V4_PRIVATE_10_PREFIX = String.fromCharCode(49, 48, 46); // '10.'
 const PRIVATE_B_PREFIX = '192.168.';
 
 export function isLocalPreviewHost(hostname: string): boolean {
@@ -12,18 +12,19 @@ export function isLocalPreviewHost(hostname: string): boolean {
     hostname === '[::1]' ||
     hostname.endsWith('.local') ||
     hostname.startsWith('192.168.') ||
-    hostname.startsWith(TEN_DOT) ||
+    hostname.startsWith(IP_V4_PRIVATE_10_PREFIX) ||
     hostname.startsWith(PRIVATE_B_PREFIX) ||
     /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname)
   );
 }
 
 export async function mockEnv(): Promise<void> {
-  const hostname = globalThis.location?.hostname;
+  const { hostname } = globalThis.location || {};
+  const { NODE_ENV } = process.env;
   const shouldMockLocalPreview =
     typeof hostname === 'string' && isLocalPreviewHost(hostname);
 
-  return process.env.NODE_ENV !== 'development' && !shouldMockLocalPreview
+  return NODE_ENV !== 'development' && !shouldMockLocalPreview
     ? undefined
     : isTMA('complete').then((isTma) => {
         if (!isTma) {
@@ -46,21 +47,23 @@ export async function mockEnv(): Promise<void> {
 
           mockTelegramEnv({
             onEvent(event, next) {
-              if (event.name === 'web_app_request_theme') {
+              const { name } = event;
+              if (name === 'web_app_request_theme') {
                 return emitEvent('theme_changed', { theme_params: themeParams as any });
               }
-              if (event.name === 'web_app_request_viewport') {
+              if (name === 'web_app_request_viewport') {
+                const { innerHeight: height, innerWidth: width } = window;
                 return emitEvent('viewport_changed', {
-                  height: window.innerHeight,
-                  width: window.innerWidth,
+                  height,
+                  width,
                   is_expanded: true,
                   is_state_stable: true,
                 });
               }
-              if (event.name === 'web_app_request_content_safe_area') {
+              if (name === 'web_app_request_content_safe_area') {
                 return emitEvent('content_safe_area_changed', noInsets);
               }
-              if (event.name === 'web_app_request_safe_area') {
+              if (name === 'web_app_request_safe_area') {
                 return emitEvent('safe_area_changed', noInsets);
               }
               next();

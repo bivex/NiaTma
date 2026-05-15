@@ -20,43 +20,77 @@ export function toAuthScreenSnapshot(
   status: AuthSessionStatus | undefined,
   context: AuthScreenSnapshotContext,
 ): AuthScreenSnapshot {
+  const {
+    rawInitDataPresent,
+    isPending,
+    t,
+    formatTime,
+    initDataUserFirstName,
+    initDataHref,
+    platformHref,
+    profileHref,
+    tonConnectHref,
+  } = context;
+
   const session = status?.session;
+  const capabilities = status?.capabilities;
   const displayName = [session?.user.firstName, session?.user.lastName].filter(Boolean).join(' ') || undefined;
 
   return {
-    rawInitDataPresent: context.rawInitDataPresent,
-    telegramAuthAvailable: status?.capabilities.telegramAuthAvailable ?? false,
-    sessionSigningConfigured: status?.capabilities.sessionSigningConfigured ?? false,
-    devLoginAvailable: status?.capabilities.devLoginAvailable ?? false,
-    sessionStatus: context.isPending ? context.t('status.loading') : status?.status || context.t('status.anonymous'),
+    rawInitDataPresent,
+    telegramAuthAvailable: capabilities?.telegramAuthAvailable ?? false,
+    sessionSigningConfigured: capabilities?.sessionSigningConfigured ?? false,
+    devLoginAvailable: capabilities?.devLoginAvailable ?? false,
+    sessionStatus: isPending ? t('status.loading') : status?.status || t('status.anonymous'),
     sessionProvider: session?.provider,
     sessionSubject: session?.sub,
-    sessionDisplayName: displayName || context.initDataUserFirstName,
+    sessionDisplayName: displayName || initDataUserFirstName,
     sessionUsername: session?.user.username,
     sessionWalletProvider: session?.wallet?.provider,
     sessionWalletAddress: session?.wallet?.address,
     sessionWalletChain: session?.wallet?.chain,
-    sessionIssuedAt: session ? context.formatTime(session.issuedAt) : undefined,
-    sessionExpiresAt: session ? context.formatTime(session.expiresAt) : undefined,
-    initDataHref: context.initDataHref,
-    platformHref: context.platformHref,
-    profileHref: context.profileHref,
-    tonConnectHref: context.tonConnectHref,
+    sessionIssuedAt: session ? formatTime(session.issuedAt) : undefined,
+    sessionExpiresAt: session ? formatTime(session.expiresAt) : undefined,
+    initDataHref,
+    platformHref,
+    profileHref,
+    tonConnectHref,
   };
 }
 
 export function buildAuthScreenModel(snapshot: AuthScreenSnapshot): AuthScreenModel {
+  const {
+    sessionStatus,
+    sessionProvider,
+    sessionSubject,
+    sessionDisplayName,
+    sessionUsername,
+    sessionWalletProvider,
+    sessionWalletAddress,
+    sessionWalletChain,
+    sessionIssuedAt,
+    sessionExpiresAt,
+    rawInitDataPresent,
+    telegramAuthAvailable,
+    sessionSigningConfigured,
+    devLoginAvailable,
+    initDataHref,
+    platformHref,
+    profileHref,
+    tonConnectHref,
+  } = snapshot;
+
   const rows = [
-    { field: 'sessionStatus', value: { kind: 'text', text: snapshot.sessionStatus } },
-    { field: 'sessionProvider', value: { kind: 'text', text: snapshot.sessionProvider } },
-    { field: 'sessionSubject', value: { kind: 'text', text: snapshot.sessionSubject } },
-    { field: 'sessionDisplayName', value: { kind: 'text', text: snapshot.sessionDisplayName } },
-    { field: 'sessionUsername', value: { kind: 'text', text: snapshot.sessionUsername } },
-    { field: 'sessionWalletProvider', value: { kind: 'text', text: snapshot.sessionWalletProvider } },
-    { field: 'sessionWalletAddress', value: { kind: 'text', text: snapshot.sessionWalletAddress } },
-    { field: 'sessionWalletChain', value: { kind: 'text', text: snapshot.sessionWalletChain } },
-    { field: 'sessionIssuedAt', value: { kind: 'text', text: snapshot.sessionIssuedAt } },
-    { field: 'sessionExpiresAt', value: { kind: 'text', text: snapshot.sessionExpiresAt } },
+    { field: 'sessionStatus', value: { kind: 'text', text: sessionStatus } },
+    { field: 'sessionProvider', value: { kind: 'text', text: sessionProvider } },
+    { field: 'sessionSubject', value: { kind: 'text', text: sessionSubject } },
+    { field: 'sessionDisplayName', value: { kind: 'text', text: sessionDisplayName } },
+    { field: 'sessionUsername', value: { kind: 'text', text: sessionUsername } },
+    { field: 'sessionWalletProvider', value: { kind: 'text', text: sessionWalletProvider } },
+    { field: 'sessionWalletAddress', value: { kind: 'text', text: sessionWalletAddress } },
+    { field: 'sessionWalletChain', value: { kind: 'text', text: sessionWalletChain } },
+    { field: 'sessionIssuedAt', value: { kind: 'text', text: sessionIssuedAt } },
+    { field: 'sessionExpiresAt', value: { kind: 'text', text: sessionExpiresAt } },
   ] as const;
 
   return {
@@ -64,16 +98,16 @@ export function buildAuthScreenModel(snapshot: AuthScreenSnapshot): AuthScreenMo
       {
         id: 'capabilities',
         rows: [
-          { field: 'rawInitDataPresent', value: { kind: 'boolean', checked: snapshot.rawInitDataPresent } },
+          { field: 'rawInitDataPresent', value: { kind: 'boolean', checked: rawInitDataPresent } },
           {
             field: 'telegramAuthAvailable',
-            value: { kind: 'boolean', checked: snapshot.telegramAuthAvailable },
+            value: { kind: 'boolean', checked: telegramAuthAvailable },
           },
           {
             field: 'sessionSigningConfigured',
-            value: { kind: 'boolean', checked: snapshot.sessionSigningConfigured },
+            value: { kind: 'boolean', checked: sessionSigningConfigured },
           },
-          { field: 'devLoginAvailable', value: { kind: 'boolean', checked: snapshot.devLoginAvailable } },
+          { field: 'devLoginAvailable', value: { kind: 'boolean', checked: devLoginAvailable } },
         ],
       },
       {
@@ -83,10 +117,10 @@ export function buildAuthScreenModel(snapshot: AuthScreenSnapshot): AuthScreenMo
       {
         id: 'links',
         rows: [
-          { field: 'initData', value: { kind: 'link', href: snapshot.initDataHref } },
-          { field: 'platform', value: { kind: 'link', href: snapshot.platformHref } },
-          { field: 'profile', value: { kind: 'link', href: snapshot.profileHref } },
-          { field: 'tonConnect', value: { kind: 'link', href: snapshot.tonConnectHref } },
+          { field: 'initData', value: { kind: 'link', href: initDataHref } },
+          { field: 'platform', value: { kind: 'link', href: platformHref } },
+          { field: 'profile', value: { kind: 'link', href: profileHref } },
+          { field: 'tonConnect', value: { kind: 'link', href: tonConnectHref } },
         ],
       },
     ],

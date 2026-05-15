@@ -11,6 +11,7 @@ export function useSwipeBackNavigation(enabled: boolean) {
   const router = useRouter();
 
   useEffect(() => {
+    const r = router;
     if (!enabled) {
       return;
     }
@@ -19,42 +20,55 @@ export function useSwipeBackNavigation(enabled: boolean) {
     let startY: number | null = null;
 
     const handleTouchStart = (event: TouchEvent) => {
-      const touch = event.touches[0];
+      const touches = event.touches;
+      const touch = touches[0];
 
-      if (!touch || touch.clientX > EDGE_THRESHOLD_PX) {
+      if (!touch) {
         startX = null;
         startY = null;
         return;
       }
 
-      startX = touch.clientX;
-      startY = touch.clientY;
+      const { clientX, clientY } = touch;
+
+      if (clientX > EDGE_THRESHOLD_PX) {
+        startX = null;
+        startY = null;
+        return;
+      }
+
+      startX = clientX;
+      startY = clientY;
     };
 
     const handleTouchEnd = (event: TouchEvent) => {
-      const touch = event.changedTouches[0];
+      const touches = event.changedTouches;
+      const touch = touches[0];
 
       if (!touch || startX === null || startY === null) {
         return;
       }
 
-      const deltaX = touch.clientX - startX;
-      const deltaY = Math.abs(touch.clientY - startY);
+      const { clientX, clientY } = touch;
+      const deltaX = clientX - startX;
+      const deltaY = Math.abs(clientY - startY);
 
       startX = null;
       startY = null;
 
       if (deltaX >= HORIZONTAL_DISTANCE_PX && deltaY <= VERTICAL_TOLERANCE_PX) {
-        router.back();
+        r.back();
       }
     };
 
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    const w = window;
+    const opts: AddEventListenerOptions = { passive: true };
+    w.addEventListener('touchstart', handleTouchStart, opts);
+    w.addEventListener('touchend', handleTouchEnd, opts);
 
     return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchend', handleTouchEnd);
+      w.removeEventListener('touchstart', handleTouchStart);
+      w.removeEventListener('touchend', handleTouchEnd);
     };
   }, [enabled, router]);
 }

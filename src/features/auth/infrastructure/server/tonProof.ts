@@ -128,8 +128,7 @@ export function parseVerifyAuthTonProofInput(value: unknown): VerifyAuthTonProof
   };
 }
 
-function extractStandardWalletPublicKey(stateInit: ReturnType<typeof loadStateInit>) {
-  const codeHash = stateInit.code?.hash().toString('hex');
+function extractStandardWalletPublicKey(codeHash: string | undefined, stateInit: any) {
   const parser = walletParsers.find((candidate) => candidate.codeHash === codeHash);
 
   if (!parser || !stateInit.data) {
@@ -200,7 +199,8 @@ export async function verifyAuthTonProof(
 
     const address = Address.parse(input.address);
     const stateInit = loadStateInit(Cell.fromBase64(input.walletStateInit).beginParse());
-    const publicKey = extractStandardWalletPublicKey(stateInit);
+    const codeHash = stateInit.code?.hash().toString('hex');
+    const publicKey = extractStandardWalletPublicKey(codeHash, stateInit);
 
     if (!publicKey) {
       return false;

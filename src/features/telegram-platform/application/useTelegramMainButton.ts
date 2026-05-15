@@ -3,14 +3,7 @@
 import { mainButton } from '@tma.js/sdk-react';
 import { useEffect } from 'react';
 
-export function useTelegramMainButton({
-  text,
-  visible,
-  enabled,
-  loading,
-  shine,
-  onClick,
-}: {
+export function useTelegramMainButton(props: {
   text: string;
   visible: boolean;
   enabled: boolean;
@@ -18,10 +11,13 @@ export function useTelegramMainButton({
   shine?: boolean;
   onClick?: () => void | Promise<void>;
 }) {
+  const { text, visible, enabled, loading, shine, onClick } = props;
+
   useEffect(() => {
+    const btn = mainButton;
     try {
-      mainButton.mount();
-      mainButton.setParams({
+      btn.mount();
+      btn.setParams({
         text,
         isVisible: visible,
         isEnabled: enabled,
@@ -30,27 +26,27 @@ export function useTelegramMainButton({
       });
 
       if (visible) {
-        mainButton.show();
+        btn.show();
       } else {
-        mainButton.hide();
+        btn.hide();
       }
 
       if (enabled) {
-        mainButton.enable();
+        btn.enable();
       } else {
-        mainButton.disable();
+        btn.disable();
       }
 
       if (loading) {
-        mainButton.showLoader();
+        btn.showLoader();
       } else {
-        mainButton.hideLoader();
+        btn.hideLoader();
       }
 
       if (shine) {
-        mainButton.enableShineEffect();
+        btn.enableShineEffect();
       } else {
-        mainButton.disableShineEffect();
+        btn.disableShineEffect();
       }
     } catch {
       return;
@@ -59,7 +55,7 @@ export function useTelegramMainButton({
     const off = onClick
       ? (() => {
           try {
-            return mainButton.onClick(() => {
+            return btn.onClick(() => {
               void onClick();
             });
           } catch {
@@ -72,10 +68,10 @@ export function useTelegramMainButton({
       off?.();
 
       try {
-        mainButton.hideLoader();
-        mainButton.disableShineEffect();
-        mainButton.hide();
-        mainButton.unmount();
+        btn.hideLoader();
+        btn.disableShineEffect();
+        btn.hide();
+        btn.unmount();
       } catch {
         // feature not available in current environment
       }

@@ -23,21 +23,23 @@ export async function initTelegramRuntime(options: {
   eruda: boolean;
   mockForMacOS: boolean;
 }): Promise<void> {
-  setDebug(options.debug);
+  const { debug, eruda, mockForMacOS } = options;
+  setDebug(debug);
   initSDK();
 
-  if (isDevelopmentBuild && options.eruda) {
+  if (isDevelopmentBuild && eruda) {
     void import('./eruda').then(({ mountEruda }) => {
       void mountEruda();
     });
   }
 
-  if (options.mockForMacOS) {
+  if (mockForMacOS) {
     let firstThemeSent = false;
 
     mockTelegramEnv({
       onEvent(event, next) {
-        if (event.name === 'web_app_request_theme') {
+        const { name } = event;
+        if (name === 'web_app_request_theme') {
           let params: Partial<ThemeParams> = {};
 
           if (firstThemeSent) {
@@ -50,7 +52,7 @@ export async function initTelegramRuntime(options: {
           return emitEvent('theme_changed', { theme_params: params as any });
         }
 
-        if (event.name === 'web_app_request_safe_area') {
+        if (name === 'web_app_request_safe_area') {
           return emitEvent('safe_area_changed', {
             left: 0,
             top: 0,

@@ -6,13 +6,14 @@ import { telegramSwipeService } from '../infrastructure/telegram';
 
 export function useVerticalSwipeBehavior(allowVerticalSwipe: boolean) {
   useEffect(() => {
+    const svc = telegramSwipeService;
     try {
-      telegramSwipeService.mount();
+      svc.mount();
 
       if (allowVerticalSwipe) {
-        telegramSwipeService.enableVertical();
+        svc.enableVertical();
       } else {
-        telegramSwipeService.disableVertical();
+        svc.disableVertical();
       }
     } catch {
       // feature not available in current environment
@@ -20,7 +21,7 @@ export function useVerticalSwipeBehavior(allowVerticalSwipe: boolean) {
 
     return () => {
       try {
-        telegramSwipeService.unmount();
+        svc.unmount();
       } catch {
         // feature not available in current environment
       }

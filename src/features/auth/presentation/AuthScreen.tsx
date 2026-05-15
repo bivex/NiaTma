@@ -46,11 +46,18 @@ export function AuthScreen() {
     initialData: initialSessionStatus,
   });
 
+  const {
+    data: sessionData,
+    isPending: sessionPending,
+    isFetching: sessionFetching,
+    refetch: refetchSessionStatus,
+  } = sessionQuery;
+
   useEffect(() => {
-    if (sessionQuery.data) {
-      syncSessionStatus(sessionQuery.data);
+    if (sessionData) {
+      syncSessionStatus(sessionData);
     }
-  }, [sessionQuery.data, syncSessionStatus]);
+  }, [sessionData, syncSessionStatus]);
 
   const refreshSession = async () => {
     await queryClient.invalidateQueries({ queryKey: authSessionQueryKey });
@@ -100,7 +107,7 @@ export function AuthScreen() {
     },
   });
 
-  const session = sessionQuery.data?.session;
+  const session = sessionData?.session;
   const displayName = [session?.user.firstName, session?.user.lastName].filter(Boolean).join(' ') || undefined;
   const timeFormatter = useMemo(
     () =>
@@ -115,32 +122,35 @@ export function AuthScreen() {
   );
 
   const screen = useMemo(
-    () =>
-      buildAuthScreenModel(
-        toAuthScreenSnapshot(sessionQuery.data, {
-          rawInitDataPresent: Boolean(rawInitData),
-          isPending: sessionQuery.isPending,
-          t,
-          formatTime: (date) => timeFormatter.format(date),
-          initDataUserFirstName: initDataUser?.first_name,
-          initDataHref: routePaths.initData,
-          platformHref: routePaths.platform,
-          profileHref: routePaths.profile,
-          tonConnectHref: routePaths.tonConnect,
-        }),
-      ),
+    () => {
+      const snapshouter = toAuthScreenSnapshot;
+      const builder = buildAuthScreenModel;
+      const snapshot = snapshouter(sessionData, {
+        rawInitDataPresent: Boolean(rawInitData),
+        isPending: sessionPending,
+        t,
+        formatTime: (date) => timeFormatter.format(date),
+        initDataUserFirstName: initDataUser?.first_name,
+        initDataHref: routePaths.initData,
+        platformHref: routePaths.platform,
+        profileHref: routePaths.profile,
+        tonConnectHref: routePaths.tonConnect,
+      });
+
+      return builder(snapshot);
+    },
     [
       initDataUser?.first_name,
       rawInitData,
-      sessionQuery.data,
-      sessionQuery.isPending,
+      sessionData,
+      sessionPending,
       t,
       timeFormatter,
     ],
   );
 
   const isBusy =
-    sessionQuery.isFetching || telegramMutation.isPending || devLoginMutation.isPending || logoutMutation.isPending;
+    sessionFetching || telegramMutation.isPending || devLoginMutation.isPending || logoutMutation.isPending;
 
   return (
     <Page swipeBack>
@@ -158,7 +168,7 @@ export function AuthScreen() {
               className="auth-screen__button-primary"
               stretched
               loading={telegramMutation.isPending}
-              disabled={!rawInitData || !(sessionQuery.data?.capabilities.telegramAuthAvailable ?? false)}
+              disabled={!rawInitData || !(sessionData?.capabilities.telegramAuthAvailable ?? false)}
               onClick={() => {
                 void telegramMutation.mutateAsync();
               }}
@@ -169,7 +179,7 @@ export function AuthScreen() {
               stretched
               mode="outline"
               loading={devLoginMutation.isPending}
-              disabled={!(sessionQuery.data?.capabilities.devLoginAvailable ?? false)}
+              disabled={!(sessionData?.capabilities.devLoginAvailable ?? false)}
               onClick={() => {
                 void devLoginMutation.mutateAsync();
               }}
@@ -188,9 +198,9 @@ export function AuthScreen() {
             <Button
               stretched
               mode="outline"
-              loading={sessionQuery.isFetching}
+              loading={sessionFetching}
               onClick={() => {
-                void sessionQuery.refetch();
+                void refetchSessionStatus();
               }}
             >
               {t('actions.refreshSession')}
@@ -199,7 +209,7 @@ export function AuthScreen() {
               stretched
               mode="gray"
               loading={logoutMutation.isPending}
-              disabled={isBusy || sessionQuery.data?.status !== 'authenticated'}
+              disabled={isBusy || sessionData?.status !== 'authenticated'}
               onClick={() => {
                 void logoutMutation.mutateAsync();
               }}

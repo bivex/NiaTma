@@ -27,11 +27,13 @@ export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserPro
     initialData: initialProfile ?? initialPersistedProfile,
   });
 
+  const { data: profileData, isFetching: isProfileFetching, refetch: refetchProfile } = profileQuery;
+
   useEffect(() => {
-    if (profileQuery.data) {
-      syncProfile(profileQuery.data);
+    if (profileData) {
+      syncProfile(profileData);
     }
-  }, [profileQuery.data, syncProfile]);
+  }, [profileData, syncProfile]);
 
   const timeFormatter = useMemo(
     () =>
@@ -46,17 +48,20 @@ export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserPro
   );
 
   const screen = useMemo(
-    () =>
-      buildProfileScreenModel(
-        toProfileScreenSnapshot(profileQuery.data, {
-          authHref: routePaths.auth,
-          platformHref: routePaths.platform,
-          tonConnectHref: routePaths.tonConnect,
-          formatTime: (date) => timeFormatter.format(date),
-          t,
-        }),
-      ),
-    [profileQuery.data, t, timeFormatter],
+    () => {
+      const snapshouter = toProfileScreenSnapshot;
+      const builder = buildProfileScreenModel;
+      const snapshot = snapshouter(profileData, {
+        authHref: routePaths.auth,
+        platformHref: routePaths.platform,
+        tonConnectHref: routePaths.tonConnect,
+        formatTime: (date) => timeFormatter.format(date),
+        t,
+      });
+
+      return builder(snapshot);
+    },
+    [profileData, t, timeFormatter],
   );
 
   return (
@@ -76,9 +81,9 @@ export function ProfileScreen({ initialProfile }: { initialProfile?: AuthUserPro
             <Button
               stretched
               mode="outline"
-              loading={profileQuery.isFetching}
+              loading={isProfileFetching}
               onClick={() => {
-                void profileQuery.refetch();
+                void refetchProfile();
               }}
             >
               {t('actions.refresh')}

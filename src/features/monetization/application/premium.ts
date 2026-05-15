@@ -21,7 +21,8 @@ export function resolveWalletPremiumAccess(
     return { enabled: true, active: false, reason: 'anonymous' };
   }
 
-  const walletPremium = session.entitlements?.walletPremium;
+  const { entitlements, wallet } = session;
+  const walletPremium = entitlements?.walletPremium;
 
   if (walletPremium?.active) {
     return {
@@ -29,18 +30,18 @@ export function resolveWalletPremiumAccess(
       active: true,
       reason: 'granted',
       grantedAt: walletPremium.grantedAt,
-      provider: session.wallet?.provider,
-      walletAddress: session.wallet?.address,
+      provider: wallet?.provider,
+      walletAddress: wallet?.address,
     };
   }
 
-  if (session.wallet) {
+  if (wallet) {
     return {
       enabled: true,
       active: false,
       reason: 'wallet_linked_only',
-      provider: session.wallet.provider,
-      walletAddress: session.wallet.address,
+      provider: wallet.provider,
+      walletAddress: wallet.address,
     };
   }
 

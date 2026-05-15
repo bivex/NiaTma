@@ -14,14 +14,14 @@ import { createAuthenticatedAuthStatus } from '@/features/auth/infrastructure/se
 
 export const dynamic = 'force-dynamic';
 
-function resolveExpectedDomain(request: Request) {
-  const forwardedHost = request.headers.get('x-forwarded-host');
+function resolveExpectedDomain(headers: Headers, url: string) {
+  const forwardedHost = headers.get('x-forwarded-host');
 
   if (forwardedHost) {
     return forwardedHost.split(',')[0]?.trim();
   }
 
-  return new URL(request.url).host;
+  return new URL(url).host;
 }
 
 export async function POST(request: Request) {
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   }
 
   const verified = await verifyAuthTonProof(payload, {
-    expectedDomain: resolveExpectedDomain(request),
+    expectedDomain: resolveExpectedDomain(request.headers, request.url),
     maxAgeSeconds: config.tonProofMaxAgeSeconds,
     consumePayload: consumeTonProofPayload,
   });

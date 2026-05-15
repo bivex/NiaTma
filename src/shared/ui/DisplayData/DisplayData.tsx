@@ -21,21 +21,26 @@ export interface DisplayDataProps {
 
 const DisplayValue: FC<{ value: DisplayDataValue }> = ({ value }) => {
   const t = useTranslations('shared.displayData');
+  const { kind } = value;
 
-  switch (value.kind) {
-    case 'link':
-      return (
-        <AppLink href={value.href || '#'}>
-          {value.label || t('open')}
-        </AppLink>
-      );
-    case 'boolean':
-      return value.checked ? t('yes') : t('no');
-    case 'color':
-      return <RGB color={value.color} />;
+  switch (kind) {
+    case 'link': {
+      const { href = '#', label } = value;
+      return <AppLink href={href}>{label || t('open')}</AppLink>;
+    }
+    case 'boolean': {
+      const { checked } = value;
+      return checked ? t('yes') : t('no');
+    }
+    case 'color': {
+      const { color } = value;
+      return <RGB color={color} />;
+    }
     case 'text':
-    default:
-      return value.text === undefined ? <i>{t('empty')}</i> : value.text;
+    default: {
+      const { text } = value as { text?: string };
+      return text === undefined ? <i>{t('empty')}</i> : text;
+    }
   }
 };
 

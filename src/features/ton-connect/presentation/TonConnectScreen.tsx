@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { TonConnectButton, TonConnectUIProvider, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
+import { TonConnectButton, TonConnectUIProvider } from '@tonconnect/ui-react';
 import {
   Avatar,
   Button,
@@ -15,7 +15,7 @@ import {
 } from '@telegram-apps/telegram-ui';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   authApiService,
@@ -41,101 +41,61 @@ import { DisplayData } from '@/shared/ui/DisplayData/DisplayData';
 
 import './TonConnectScreen.css';
 
+import { useTonProofConnection } from '../application/useTonProofConnection';
+
 const [, e] = bem('ton-connect-page');
 
 function TonConnectScreenContent() {
-  const rawWallet = useTonWallet();
-  const [tonConnectUI] = useTonConnectUI();
   const wallet = useTonWalletSnapshot();
   const screen = buildTonConnectScreenModel(wallet);
   const t = useTranslations('tonConnect');
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const handledProofRef = useRef<string | undefined>(undefined);
   const [notice, setNotice] = useState<string>();
   const persistedSessionStatus = useAuthStore((state) => state.sessionStatus);
   const syncSessionStatus = useAuthStore((state) => state.syncSessionStatus);
   const postAuthPath = useMemo(() => resolvePostAuthPath(searchParams.get('next')), [searchParams]);
+
   const initialSessionStatus = useMemo(
     () => sanitizePersistedAuthSessionStatus(persistedSessionStatus),
     [persistedSessionStatus],
   );
+
   const sessionQuery = useQuery({
     queryKey: authSessionQueryKey,
     queryFn: authApiService.fetchSession,
     initialData: initialSessionStatus,
   });
-  const tonProofPayloadQuery = useQuery({
-    queryKey: authTonProofPayloadQueryKey,
-    queryFn: authApiService.fetchTonProofPayload,
-    staleTime: 60_000,
-    refetchInterval: 60_000,
-    retry: 1,
+
+  const { data: sessionData, isFetching: isSessionFetching } = sessionQuery;
+
+  const { isFetchingPayload, isVerifying } = useTonProofConnection({
+    onNotice: setNotice,
+    onSuccess: async () => {
+      const r = router;
+      if (postAuthPath) {
+        r.replace(postAuthPath);
+      }
+    },
   });
 
   useEffect(() => {
-    if (sessionQuery.data) {
-      syncSessionStatus(sessionQuery.data);
+    const sync = syncSessionStatus;
+    if (sessionData) {
+      sync(sessionData);
     }
-  }, [sessionQuery.data, syncSessionStatus]);
-
-  useEffect(() => {
-    if (tonProofPayloadQuery.isPending && !tonProofPayloadQuery.data) {
-      tonConnectUI.setConnectRequestParameters({ state: 'loading' });
-      return;
-    }
-
-    if (tonProofPayloadQuery.data?.payload) {
-      tonConnectUI.setConnectRequestParameters({
-        state: 'ready',
-        value: { tonProof: tonProofPayloadQuery.data.payload },
-      });
-      return;
-    }
-
-    tonConnectUI.setConnectRequestParameters(null);
-  }, [tonConnectUI, tonProofPayloadQuery.data, tonProofPayloadQuery.isPending]);
-
-  useEffect(
-    () => () => {
-      tonConnectUI.setConnectRequestParameters(null);
-    },
-    [tonConnectUI],
-  );
-
-  useEffect(() => {
-    if (!rawWallet) {
-      handledProofRef.current = undefined;
-    }
-  }, [rawWallet]);
+  }, [sessionData, syncSessionStatus]);
 
   const walletPayload = useMemo(() => toAuthLinkedWalletInput(wallet), [wallet]);
 
   const refreshAuth = async () => {
+    const q = queryClient;
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: authSessionQueryKey }),
-      queryClient.invalidateQueries({ queryKey: authProfileQueryKey }),
+      q.invalidateQueries({ queryKey: authSessionQueryKey }),
+      q.invalidateQueries({ queryKey: authProfileQueryKey }),
     ]);
   };
-
-  const verifyMutation = useMutation({
-    mutationFn: authApiService.verifyTonProofSession,
-    onSuccess: async (status) => {
-      syncSessionStatus(status);
-      setNotice(t('messages.tonProofSuccess'));
-      await refreshAuth();
-
-      if (postAuthPath) {
-        router.replace(postAuthPath);
-      }
-    },
-    onError: async () => {
-      handledProofRef.current = undefined;
-      setNotice(t('messages.tonProofError'));
-      await queryClient.invalidateQueries({ queryKey: authTonProofPayloadQueryKey });
-    },
-  });
 
   const linkMutation = useMutation({
     mutationFn: authApiService.linkWallet,
@@ -161,47 +121,8 @@ function TonConnectScreenContent() {
     },
   });
 
-  const handleWalletStatusChange = useCallback(
-    async (nextWallet: ReturnType<typeof useTonWallet>) => {
-      if (!nextWallet) {
-        return;
-      }
-
-      const verifyInput = toVerifyAuthTonProofInput(nextWallet as any);
-
-      if (!verifyInput) {
-        const tonProofReply = nextWallet.connectItems?.tonProof;
-        if (tonProofReply && !('proof' in tonProofReply)) {
-          setNotice(t('messages.tonProofRejected'));
-        } else if (!nextWallet.account.publicKey) {
-          setNotice(t('messages.tonProofMissingPublicKey'));
-        }
-        return;
-      }
-
-      const proofFingerprint = [
-        verifyInput.address,
-        verifyInput.proof.payload,
-        verifyInput.proof.signature,
-      ].join(':');
-
-      if (handledProofRef.current === proofFingerprint) {
-        return;
-      }
-
-      handledProofRef.current = proofFingerprint;
-
-      await verifyMutation.mutateAsync(verifyInput);
-    },
-    [t, verifyMutation],
-  );
-
-  useEffect(
-    () => tonConnectUI.onStatusChange((nextWallet) => void handleWalletStatusChange(nextWallet)),
-    [handleWalletStatusChange, tonConnectUI],
-  );
-
-  const linkedWallet = sessionQuery.data?.session?.wallet;
+  const { session } = sessionData || {};
+  const linkedWallet = session?.wallet;
   const linkedWalletRows: DisplayDataRow[] = linkedWallet
     ? [
         { title: t('linking.fields.provider'), value: { kind: 'text', text: linkedWallet.provider } },
@@ -209,13 +130,15 @@ function TonConnectScreenContent() {
         { title: t('linking.fields.chain'), value: { kind: 'text', text: linkedWallet.chain } },
       ]
     : [];
-  const isAuthenticated = sessionQuery.data?.status === 'authenticated';
-  const hasPremiumAccess = Boolean(sessionQuery.data?.session?.entitlements?.walletPremium?.active);
+  const isAuthenticated = sessionData?.status === 'authenticated';
+  const entitlements = session?.entitlements;
+  const walletPremium = entitlements?.walletPremium;
+  const hasPremiumAccess = Boolean(walletPremium?.active);
   const matchesLinkedWallet = Boolean(walletPayload?.address && linkedWallet?.address === walletPayload.address);
   const isBusy =
-    sessionQuery.isFetching ||
-    tonProofPayloadQuery.isFetching ||
-    verifyMutation.isPending ||
+    isSessionFetching ||
+    isFetchingPayload ||
+    isVerifying ||
     linkMutation.isPending ||
     unlinkMutation.isPending;
 

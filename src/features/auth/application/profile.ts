@@ -33,11 +33,14 @@ export function toProfileScreenSnapshot(
   profile: AuthUserProfile | undefined,
   context: ProfileScreenSnapshotContext,
 ): ProfileScreenSnapshot {
+  const { t, authHref, platformHref, tonConnectHref, formatTime } = context;
+
   if (!profile) {
+    const loading = t('status.loading');
     return {
-      subject: context.t('status.loading'),
-      provider: context.t('status.loading'),
-      userId: context.t('status.loading'),
+      subject: loading,
+      provider: loading,
+      userId: loading,
       displayName: undefined,
       username: undefined,
       languageCode: undefined,
@@ -46,66 +49,97 @@ export function toProfileScreenSnapshot(
       walletChain: undefined,
       walletPublicKey: undefined,
       walletLinkedAt: undefined,
-      issuedAt: context.t('status.loading'),
-      expiresAt: context.t('status.loading'),
-      authHref: context.authHref,
-      platformHref: context.platformHref,
-      tonConnectHref: context.tonConnectHref,
+      issuedAt: loading,
+      expiresAt: loading,
+      authHref,
+      platformHref,
+      tonConnectHref,
     };
   }
 
+  const {
+    subject,
+    provider,
+    userId,
+    displayName,
+    username,
+    languageCode,
+    wallet,
+    issuedAt,
+    expiresAt,
+  } = profile;
+
   return {
-    subject: profile.subject,
-    provider: profile.provider,
-    userId: profile.userId,
-    displayName: profile.displayName,
-    username: profile.username,
-    languageCode: profile.languageCode,
-    walletProvider: profile.wallet?.provider,
-    walletAddress: profile.wallet?.address,
-    walletChain: profile.wallet?.chain,
-    walletPublicKey: profile.wallet?.publicKey,
-    walletLinkedAt: profile.wallet ? context.formatTime(profile.wallet.linkedAt) : undefined,
-    issuedAt: context.formatTime(profile.issuedAt),
-    expiresAt: context.formatTime(profile.expiresAt),
-    authHref: context.authHref,
-    platformHref: context.platformHref,
-    tonConnectHref: context.tonConnectHref,
+    subject,
+    provider,
+    userId,
+    displayName,
+    username,
+    languageCode,
+    walletProvider: wallet?.provider,
+    walletAddress: wallet?.address,
+    walletChain: wallet?.chain,
+    walletPublicKey: wallet?.publicKey,
+    walletLinkedAt: wallet ? formatTime(wallet.linkedAt) : undefined,
+    issuedAt: formatTime(issuedAt),
+    expiresAt: formatTime(expiresAt),
+    authHref,
+    platformHref,
+    tonConnectHref,
   };
 }
 
 export function buildProfileScreenModel(snapshot: ProfileScreenSnapshot): ProfileScreenModel {
+  const {
+    subject,
+    provider,
+    userId,
+    displayName,
+    username,
+    languageCode,
+    walletProvider,
+    walletAddress,
+    walletChain,
+    walletPublicKey,
+    walletLinkedAt,
+    issuedAt,
+    expiresAt,
+    authHref,
+    tonConnectHref,
+    platformHref,
+  } = snapshot;
+
   const sections: ProfileScreenModel['sections'] = [
     {
       id: 'identity',
       rows: [
-        { field: 'subject', value: { kind: 'text', text: snapshot.subject } },
-        { field: 'provider', value: { kind: 'text', text: snapshot.provider } },
-        { field: 'userId', value: { kind: 'text', text: snapshot.userId } },
-        { field: 'displayName', value: { kind: 'text', text: snapshot.displayName } },
-        { field: 'username', value: { kind: 'text', text: snapshot.username } },
-        { field: 'languageCode', value: { kind: 'text', text: snapshot.languageCode } },
+        { field: 'subject', value: { kind: 'text', text: subject } },
+        { field: 'provider', value: { kind: 'text', text: provider } },
+        { field: 'userId', value: { kind: 'text', text: userId } },
+        { field: 'displayName', value: { kind: 'text', text: displayName } },
+        { field: 'username', value: { kind: 'text', text: username } },
+        { field: 'languageCode', value: { kind: 'text', text: languageCode } },
       ],
     },
   ];
 
   const hasWalletInfo = [
-    snapshot.walletProvider,
-    snapshot.walletAddress,
-    snapshot.walletChain,
-    snapshot.walletPublicKey,
-    snapshot.walletLinkedAt,
+    walletProvider,
+    walletAddress,
+    walletChain,
+    walletPublicKey,
+    walletLinkedAt,
   ].some(Boolean);
 
   if (hasWalletInfo) {
     sections.push({
       id: 'wallet',
       rows: [
-        { field: 'walletProvider', value: { kind: 'text', text: snapshot.walletProvider } },
-        { field: 'walletAddress', value: { kind: 'text', text: snapshot.walletAddress } },
-        { field: 'walletChain', value: { kind: 'text', text: snapshot.walletChain } },
-        { field: 'walletPublicKey', value: { kind: 'text', text: snapshot.walletPublicKey } },
-        { field: 'walletLinkedAt', value: { kind: 'text', text: snapshot.walletLinkedAt } },
+        { field: 'walletProvider', value: { kind: 'text', text: walletProvider } },
+        { field: 'walletAddress', value: { kind: 'text', text: walletAddress } },
+        { field: 'walletChain', value: { kind: 'text', text: walletChain } },
+        { field: 'walletPublicKey', value: { kind: 'text', text: walletPublicKey } },
+        { field: 'walletLinkedAt', value: { kind: 'text', text: walletLinkedAt } },
       ],
     });
   }
@@ -114,16 +148,16 @@ export function buildProfileScreenModel(snapshot: ProfileScreenSnapshot): Profil
     {
       id: 'session',
       rows: [
-        { field: 'issuedAt', value: { kind: 'text', text: snapshot.issuedAt } },
-        { field: 'expiresAt', value: { kind: 'text', text: snapshot.expiresAt } },
+        { field: 'issuedAt', value: { kind: 'text', text: issuedAt } },
+        { field: 'expiresAt', value: { kind: 'text', text: expiresAt } },
       ],
     },
     {
       id: 'links',
       rows: [
-        { field: 'auth', value: { kind: 'link', href: snapshot.authHref } },
-        { field: 'tonConnect', value: { kind: 'link', href: snapshot.tonConnectHref } },
-        { field: 'platform', value: { kind: 'link', href: snapshot.platformHref } },
+        { field: 'auth', value: { kind: 'link', href: authHref } },
+        { field: 'tonConnect', value: { kind: 'link', href: tonConnectHref } },
+        { field: 'platform', value: { kind: 'link', href: platformHref } },
       ],
     },
   );

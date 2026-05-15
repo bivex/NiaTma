@@ -15,12 +15,17 @@ function getTonProofPayloadStore() {
 
 function pruneExpiredPayloads(nowMs: number) {
   const store = getTonProofPayloadStore();
+  const toDelete: string[] = [];
 
-  for (const [payload, entry] of store.entries()) {
+  store.forEach((entry, payload) => {
     if (entry.expiresAt <= nowMs) {
-      store.delete(payload);
+      toDelete.push(payload);
     }
-  }
+  });
+
+  toDelete.forEach((payload) => {
+    store.delete(payload);
+  });
 }
 
 export async function issueTonProofPayload(
